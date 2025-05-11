@@ -17,10 +17,10 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('owner_id')
-            ->references('user_handle')
-            ->on('users')
-            ->onDelete('cascade');
-            
+                ->references('user_handle')
+                ->on('users')
+                ->onDelete('cascade');
+
             $table->index('owner_id');
         });
     }

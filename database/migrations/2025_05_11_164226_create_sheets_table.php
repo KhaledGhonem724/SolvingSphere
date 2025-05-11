@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('visibility');
+            $table->enum('visibility', ['public', 'private'])->default('public');
             $table->timestamp('created_at')->nullable();
             $table->string('owner_id');
             $table->foreign('owner_id')->references('user_handle')->on('users')->onDelete('cascade');

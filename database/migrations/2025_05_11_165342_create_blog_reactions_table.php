@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('blog_reactions', function (Blueprint $table) {
             $table->id();
-            $table->string('reaction'); // Values: upvoting, downvoting
+            $table->enum('reaction', ['upvoting', 'downvoting']); // Values: upvoting, downvoting
             $table->string('owner_id');
             $table->unsignedBigInteger('blog_id');
             $table->timestamps();

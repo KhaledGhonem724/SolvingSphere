@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title')->unique();
             $table->text('content');
-            $table->enum('blog_type', ['question', 'discussion', 'explain']);
+            $table->enum('blog_type', ['question', 'discussion', 'explain'])->default('discussion');
             $table->integer('score')->default(0);
             $table->string('owner_id');
             $table->timestamps();

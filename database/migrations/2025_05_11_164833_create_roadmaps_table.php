@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('visibility', ['public', 'private']);
+            $table->enum('visibility', ['public', 'private'])->default('public');
             $table->timestamps();
             $table->string('owner_id');
 
