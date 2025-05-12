@@ -1,5 +1,68 @@
+
+
 # Laravel Core Structure Summary
-## Laravel : MVC Structure
+```
+<<<<<<< HEAD
+SolvingSphere/
+│
+├── app/
+│   ├── Http/Controllers/       ← 🟢 Controllers (C)
+│   |   ├── ProblemController.php
+│   |   ├── TagController.php
+│   │   └── BlogController.php
+=======
+project/
+│
+├── app/
+│   ├── Http/
+│   │   └── Controllers/       ← 🟢 Controllers (C)
+│   │       └── PostController.php
+>>>>>>> 26c3ba4 (update: README)
+│   ├── Models/                ← 🔵 Models (M)
+│       └── Post.php
+│
+├── database/
+│   ├── factories/             ← 🟣 Factories (support Models)
+│   │   └── PostFactory.php
+│   ├── migrations/            ← 🟤 Migrations (define schema for Models)
+│   │   └── 2024_01_01_create_posts_table.php
+│   └── seeders/               ← 🟠 Seeders (populate Models with data)
+│       └── PostSeeder.php
+│
+├── resources/
+│   └── views/                 ← 🔴 Views (V)
+<<<<<<< HEAD
+│       ├── index.blade.php
+│       ├── problems/
+│       |   ├── all_problems.blade.php
+│       |   ├── ...
+|       |   └── problem.blade.php
+│       ├── blogs/
+│       ├── containers/
+│       ├── status/
+│       ├── groups/
+│       ├── admin/
+│       └── profile/
+=======
+│       └── posts/
+│           └── index.blade.php
+│           └── show.blade.php
+>>>>>>> 26c3ba4 (update: README)
+│
+├── routes/
+│   └── web.php                ← Connects routes to Controllers
+```
+
+### 🗂️ Legend:
+* 🟢 **Controllers**: Handle app logic and return views or JSON.
+* 🔵 **Models**: Represent data and DB logic using Eloquent ORM.
+* 🔴 **Views**: Blade templates for rendering HTML.
+* 🟣 **Factories**: Generate fake model data.
+* 🟤 **Migrations**: Define DB table structure.
+* 🟠 **Seeders**: Fill tables with data.
+---
+
+# Laravel : MVC Structure
 
 ### **Controllers** (`solvingsphere/app/Http/Controllers/`)
 * Handle **logic** for user requests.
