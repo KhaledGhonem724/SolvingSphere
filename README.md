@@ -6,42 +6,72 @@ SolvingSphere/
 │
 ├── app/
 │   ├── Http/Controllers/       ← 🟢 Controllers (C)
-│   │   ├── problems/
+│   │   ├── problems/           ← 🟢 Folder for problems section contains multibles files or folders if needed
 │   │   │   ├── ProblemController.php
 │   │   │   ├── ...
 │   │   │   └── any other files you need
 │   │   ├── blogs/
+│   │   │   └── ...
 │   │   ├── containers/
+│   │   │   └── ...
 │   │   ├── status/
+│   │   │   └── ...
 │   │   ├── groups/
+│   │   │   └── ...
 │   │   ├── admin/
+│   │   │   └── ...
 │   │   └── profile/
-│   └── Models/                ← 🔵 Models (M)
-│       └── Post.php
+│   │       └── ...
+│   │
+│   │
+│   └── Models/                 ← 🔵 Models (M)
+│       ├── problems.php        ← 🔵 file for problems sectoin (usually contains one Model)
+│       ├── blogs.php
+│       ├── containers.php
+│       ├── status.php
+│       ├── groups.php
+│       ├── admin.php
+│       └── profile.php
 │
-├── database/
-│   ├── factories/             ← 🟣 Factories (support Models)
-│   │   └── PostFactory.php
-│   ├── migrations/            ← 🟤 Migrations (define schema for Models)
-│   │   └── 2024_01_01_create_posts_table.php
-│   └── seeders/               ← 🟠 Seeders (populate Models with data)
-│       └── PostSeeder.php
+│
+├── database/                   ← 🟠 Folder to control the database
+│   ├── factories/              ← 🟠 Factories (Generate fake or static data according to Models)
+│   │   └── ProblemFactory.php
+│   ├── migrations/             ← 🟠 Migrations (define schema for Models)
+│   │   └── 2024_01_01_create_problems_table.php
+│   └── seeders/                ← 🟠 Seeders (Fill the tables "Models" with factories' data)
+│       └── ProblemSeeder.php
+│
 │
 ├── resources/
-│   └── views/                 ← 🔴 Views (V)
-│       ├── index.blade.php
-│       ├── problems/
-│       │   ├── all_problems.blade.php
-│       │   ├── ...
-│       │   └── problem.blade.php
-│       ├── blogs/
-│       ├── containers/
-│       ├── status/
-│       ├── groups/
-│       ├── admin/
-│       ├── profile/
-│       └── posts/
-│
+│   ├── views/                  ← 🔴 ALL Views (V)
+│   │   ├── Components/         ← 🔴 Blade General Components 
+│   │   │   └── MyButton.blade.php
+│   │   ├── index.blade.php
+│   │   ├── problems/           ← 🔴 Views for problems Section
+│   │   │   ├── all_problems.blade.php
+│   │   │   ├── ...
+│   │   │   └── problem.blade.php
+│   │   ├── blogs/
+│   │   │   └── ...
+│   │   ├── containers/
+│   │   │   └── ...
+│   │   ├── status/
+│   │   │   └── ...
+│   │   ├── groups/
+│   │   │   └── ...
+│   │   ├── admin/
+│   │   │   └── ...
+│   │   ├── profile/
+│   │   │   └── ...
+│   │   └── posts/
+│   │       └── ...
+│   ├── js/                     ← 🔴 React General files
+│   │   ├── Components/         ← 🔴 React General Components 
+│   │   │   └── MyButton.jsx
+│   │   └── app.jsx
+│   └── css/                    ← 🔴 CSS General files (for custom styles)
+│       └── app.css         
 ├── routes/
 │   └── web.php                ← Connects routes to Controllers
 ```
@@ -50,24 +80,10 @@ SolvingSphere/
 * 🟢 **Controllers**: Handle app logic and return views or JSON.
 * 🔵 **Models**: Represent data and DB logic using Eloquent ORM.
 * 🔴 **Views**: Blade templates for rendering HTML.
-* 🟣 **Factories**: Generate fake model data.
-* 🟤 **Migrations**: Define DB table structure.
-* 🟠 **Seeders**: Fill tables with data.
+* 🟠 **Databases**: Manage database
 ---
 
-# Laravel : MVC Structure
-
-### **Controllers** (`solvingsphere/app/Http/Controllers/`)
-* Handle **logic** for user requests.
-* Receive data from routes, interact with models, and return views or JSON.
-```php
-// Example
-public function index() {
-    $posts = Post::all();
-    return view('posts.index', compact('posts'));
-}
-```
----
+# Laravel: MVC Structure
 
 ### **Models** (`solvingsphere/app/Models/`)
 * Represent a **database table** using Eloquent ORM.
@@ -89,34 +105,47 @@ class Post extends Model {
 @endforeach
 ```
 ---
-
-# Laravel : Database Component
-### **Factories** (`solvingsphere/database/factories/`)
-* Used to **generate fake data** for testing or seeding.
-* Often paired with models and seeders.
+### **Controllers** (`solvingsphere/app/Http/Controllers/`)
+* Handle **logic** for user requests.
+* Receive data from routes, interact with models, and return views or JSON.
 ```php
-Post::factory()->count(10)->create();
+// Example
+public function index() {
+    $posts = Post::all();
+    return view('posts.index', compact('posts'));
+}
 ```
 ---
+
+# Laravel : Database Component
+
 
 ### **Migrations** (`solvingsphere/database/migrations/`)
 * Define **database structure** in PHP.
 * Track changes to the schema over time (versioning).
 ```php
-Schema::create('posts', function (Blueprint $table) {
-    $table->id();
+Schema::create('problems', function (Blueprint $table) {
+    $table->string('problem_handle')->primary();
+    $table->string('website');
     $table->string('title');
-    $table->text('body');
+    .
+    ...
     $table->timestamps();
 });
 ```
 ---
-
+### **Factories** (`solvingsphere/database/factories/`)
+* Used to **generate fake data** for testing or seeding.
+* Often paired with models and seeders.
+```php
+Problem::factory()->count(10)->create();
+```
+---
 ### **Seeders** (`solvingsphere/database/seeders/`)
 * Insert **sample or default data** into your tables.
 * Often used to fill the DB with test data after migrations.
 ```php
-Post::factory(10)->create();
+Problem::factory(10)->create();
 ```
 ---
 
