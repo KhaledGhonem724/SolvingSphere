@@ -11,6 +11,7 @@ return new class extends Migration
     {
         Schema::create('problems', function (Blueprint $table) {
             $table->string('problem_handle')->primary();
+            $table->string('link');
             $table->string('website');
             $table->string('title');
             $table->string('timelimit');
