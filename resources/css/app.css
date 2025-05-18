@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 @plugin 'tailwindcss-animate';
 
 @source '../views';
@@ -68,6 +73,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
     *,
     ::after,
     ::before,
