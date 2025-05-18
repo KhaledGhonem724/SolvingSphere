@@ -6,21 +6,21 @@ SolvingSphere/
 │
 ├── app/
 │   ├── Http/Controllers/       ← 🟢 Controllers (C)
-│   │   ├── problems/           ← 🟢 Folder for problems section contains multibles files or folders if needed
+│   │   ├── Problems/           ← 🟢 Folder for problems section contains multibles files or folders if needed
 │   │   │   ├── ProblemController.php
 │   │   │   ├── ...
 │   │   │   └── any other files you need
-│   │   ├── blogs/
+│   │   ├── Blogs/
 │   │   │   └── ...
-│   │   ├── containers/
+│   │   ├── Containers/
 │   │   │   └── ...
-│   │   ├── status/
+│   │   ├── Status/
 │   │   │   └── ...
-│   │   ├── groups/
+│   │   ├── Groups/
 │   │   │   └── ...
-│   │   ├── admin/
+│   │   ├── Admins/
 │   │   │   └── ...
-│   │   └── profile/
+│   │   └── Profiles/
 │   │       └── ...
 │   │
 │   │
@@ -48,21 +48,21 @@ SolvingSphere/
 │   │   ├── Components/         ← 🔴 Blade General Components 
 │   │   │   └── MyButton.blade.php
 │   │   ├── index.blade.php
-│   │   ├── problems/           ← 🔴 Views for problems Section
+│   │   ├── Problems/           ← 🔴 Views for problems Section
 │   │   │   ├── all_problems.blade.php
 │   │   │   ├── ...
 │   │   │   └── problem.blade.php
-│   │   ├── blogs/
+│   │   ├── Blogs/
 │   │   │   └── ...
-│   │   ├── containers/
+│   │   ├── Containers/
 │   │   │   └── ...
-│   │   ├── status/
+│   │   ├── Status/
 │   │   │   └── ...
-│   │   ├── groups/
+│   │   ├── Groups/
 │   │   │   └── ...
-│   │   ├── admin/
+│   │   ├── Admins/
 │   │   │   └── ...
-│   │   └── profile/
+│   │   └── Profiles/
 │   │       └── ...
 │   ├── js/                     ← 🔴 React General files
 │   │   ├── Components/         ← 🔴 React General Components 
