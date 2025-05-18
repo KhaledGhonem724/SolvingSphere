@@ -1,21 +1,23 @@
 <?php
 
+
+namespace Database\Factories;
+
+
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\Problem;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Problem>
  */
 class ProblemFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Problem::class;
+
     public function definition(): array
     {
         return [
