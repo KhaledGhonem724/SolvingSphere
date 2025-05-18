@@ -7,11 +7,13 @@
     </x-slot>
 
     <x-slot name="items">
-        <ul>
-            @foreach ($problems as $problem)
-                <li class="border-b py-2">{{ $problem->title }}</li>
-            @endforeach
-        </ul>
+        @foreach ($problems as $problem)
+            <x-listing-item
+            :title="$problem['title']"
+            :description="$problem['description'] ?? ''"
+            :itemLink="route('problems.show', $problem['problem_handle'])"
+            />
+        @endforeach
     </x-slot>
 
 </x-temp-listing-layout>

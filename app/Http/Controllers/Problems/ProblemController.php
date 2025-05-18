@@ -31,10 +31,24 @@ class ProblemController extends Controller
     
         return redirect()->route('problems.index')->with('success', 'Problem created successfully.');
     }
-    
-    public function show(string $id)
+
+    public function show(string $problem_handle)
     {
-        $problem = Problem::findOrFail($id);
+        $problem = Problem::findOrFail($problem_handle);
         return view('problems.show', compact('problem'));
+/*
+        return view('problems.show', [
+            'title' => $problem->title,
+            'problemName' => $problem->title,
+            'link' => $problem->link,
+            'website' => $problem->website,
+            'timelimit' => $problem->timelimit,
+            'memorylimit' => $problem->memorylimit,
+            'statement' => $problem->statement,
+            'testcases' => $problem->testcases,
+            'notes' => $problem->notes,
+        ]);
+
+*/
     }
 }
