@@ -1,4 +1,4 @@
-<x-list-layout :title="'Problems List'" :pageTitle="'Problems'" >
+<x-temp-listing-layout :title="'Problems List'" :pageTitle="'Problems'" >
 
     <x-slot name="filters">
         <form>
@@ -14,4 +14,4 @@
         </ul>
     </x-slot>
 
-</x-list-layout>
+</x-temp-listing-layout>

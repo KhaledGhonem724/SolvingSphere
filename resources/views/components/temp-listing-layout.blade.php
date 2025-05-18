@@ -1,4 +1,4 @@
-<x-layout :title="$title ?? 'List Page'">
+<x-temp-general-layout :title="$title ?? 'List Page'">
     <div class="mb-4">
         {{-- Filters Slot --}}
         {{ $filters ?? '' }}
@@ -13,4 +13,4 @@
         {{-- Items Slot --}}
         {{ $items ?? '' }}
     </div>
-</x-layout>
+</x-temp-general-layout>
