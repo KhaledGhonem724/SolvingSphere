@@ -13,7 +13,9 @@ class Problem extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['problem_handle', 'website', 'title', 'timelimit', 'memorylimit', 'statement', 'testcases', 'notes'];
+    protected $fillable = ['problem_handle', 'link','website', 
+                            'title', 'timelimit', 'memorylimit', 
+                            'statement', 'testcases', 'notes'];
 
     public function tags(): BelongsToMany { return $this->belongsToMany(Tag::class, 'problem_tag', 'problem_id', 'tag_id'); }
     public function sheets(): BelongsToMany { return $this->belongsToMany(Sheet::class, 'sheet_problem', 'problem_id', 'sheet_id'); }
