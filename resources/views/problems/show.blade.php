@@ -15,20 +15,13 @@
         <br>
         <strong>Memory Limit:</strong> {{ $problem->memorylimit }}
     </div>
-
-    <div class="mb-4">
-        <strong>Statement:</strong>
-        <div class="mt-2">{!! $problem->statement !!}</div>
-    </div>
-
-    <div class="mb-4">
-        <strong>Test Cases:</strong>
-        <div class="mt-2">{!! $problem->testcases !!}</div>
-    </div>
-
-    <div class="mb-4">
-        <strong>Notes:</strong>
-        <div class="mt-2">{!! $problem->notes !!}</div>
-    </div>
-
+    {!! $problem->statement !!}
+    <!--
+    <strong>Test Cases:</strong>
+    {!! $problem->testcases !!}
+    <strong>Notes:</strong>
+    {!! $problem->notes !!}
+    -->
+    <hr><hr><hr><hr>
+    
 </x-temp-general-layout>

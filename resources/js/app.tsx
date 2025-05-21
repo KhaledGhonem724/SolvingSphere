@@ -1,24 +1,39 @@
 import '../css/app.css';
-
-import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+// Tell TypeScript about window.MathJax
+declare global {
+    interface Window {
+        MathJax?: {
+            typeset?: () => void;
+        };
+    }
+}
 
-createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
-    setup({ el, App, props }) {
-        const root = createRoot(el);
+interface LatexRendererProps {
+    formula: string;
+}
 
-        root.render(<App {...props} />);
-    },
-    progress: {
-        color: '#4B5563',
-    },
-});
+// React component to render LaTeX formulas using MathJax
+const LatexRenderer: React.FC<LatexRendererProps> = ({ formula }) => {
+    useEffect(() => {
+        if (window.MathJax && window.MathJax.typeset) {
+            window.MathJax.typeset();
+        }
+    }, [formula]);
 
-// This will set light / dark mode on load...
+    return <div className="mathjax-latex" dangerouslySetInnerHTML={{ __html: formula }} />;
+};
+
+// Initialize your app and theme
 initializeTheme();
+
+// This example assumes you have an element with id 'latex-root' in your Blade template
+const container = document.getElementById('latex-root');
+if (container) {
+    const formula = container.getAttribute('data-formula') || '';
+    const root = createRoot(container);
+    root.render(<LatexRenderer formula={formula} />);
+}

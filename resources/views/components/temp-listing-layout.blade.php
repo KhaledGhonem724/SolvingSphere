@@ -6,7 +6,7 @@
 
     <div class="mb-4">
         {{-- Filters Slot --}}
-        {{ $filters ?? '' }}
+        {{ view('components.filters') }}
     </div>
 
     <div class="space-y-4 mb-4">
