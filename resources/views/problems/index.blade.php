@@ -1,17 +1,26 @@
-<x-temp-listing-layout :title="'Problems List'" :pageTitle="'Problems'" >
+<x-temp-listing-layout :title="'All Problems'" :pageTitle="'Problems'" >
 
     <x-slot name="filters">
         <form>
             <input type="text" name="search" placeholder="Search problems..." class="border px-2 py-1" />
         </form>
     </x-slot>
-
+<!--
+    <x-slot name="filters">
+        <form>
+            <input type="text" name="search" placeholder="Search problems..." class="border px-2 py-1" />
+        </form>
+    </x-slot>
+-->
+    
     <x-slot name="items">
-        <ul>
-            @foreach ($problems as $problem)
-                <li class="border-b py-2">{{ $problem->title }}</li>
-            @endforeach
-        </ul>
+        @foreach ($problems as $problem)
+            <x-listing-item
+            :title="$problem['title']"
+            :description="$problem['description'] ?? ''"
+            :itemLink="route('problems.show', $problem['problem_handle'])"
+            />
+        @endforeach
     </x-slot>
 
 </x-temp-listing-layout>
