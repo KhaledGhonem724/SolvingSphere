@@ -13,7 +13,7 @@ return new class extends Migration
             $table->text('code');
             $table->string('language'); // Expected values: cpp, java, python
             $table->string('result');
-            $table->boolean('ai_help')->default(false);
+            $table->string('original_link')->nullable();
             $table->text('ai_response')->nullable();
             $table->string('owner_id');
             $table->string('problem_id');

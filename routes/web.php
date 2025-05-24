@@ -16,6 +16,8 @@ Route::prefix('problems')->group(function () {
     Route::get('/{problem_handle}', [ProblemController::class, 'show'])->name('problems.show');        // show problem details
 });
 
+
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');

@@ -46,6 +46,7 @@ class ProblemController extends Controller
             return back()->withErrors(['problem-url' => 'Failed to fetch problem data.']);
         }
 
+        // Store scraped data
         $problemData = $scraped['problem'];
         $problemHandle = $problemData['problem_handle'];
 
@@ -63,11 +64,11 @@ class ProblemController extends Controller
             'timelimit'      => $problemData['timelimit'],
             'memorylimit'    => $problemData['memorylimit'],
             'statement'      => $problemData['statement'],
-            'testcases'      => json_encode($problemData['testcases']),
+            'testcases'      => json_encode($problemData['testcases']), // NEEDED // review this 
             'notes'          => $problemData['notes'] ?? null,
         ]);
 
-        // Optionally save tags if your model supports it (e.g., via taggable or pivot table)
+        // NEEDED // Save tags if your model supports it (e.g., via taggable or pivot table)
         // Example: $problem->tags()->createMany($scraped['tags']);
 
         return redirect()->route('problems.show', $problemHandle)
