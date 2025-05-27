@@ -83,6 +83,7 @@ class ProblemController extends Controller
     {
         $problem = Problem::findOrFail($problem_handle);
         return view('problems.show', compact('problem'));
+    }
 /*
         return view('problems.show', [
             'title' => $problem->title,
@@ -97,5 +98,5 @@ class ProblemController extends Controller
         ]);
 
 */
-    }
+
 }
