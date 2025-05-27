@@ -1,9 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Submissions;
 
-use App\Models\Submission;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Submission;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Problem;
+use App\Services\ProblemSubmitterService;
+
+//use App\Http\Controllers\Problems\ProblemController;
 
 class SubmissionController extends Controller
 {
@@ -15,27 +21,30 @@ class SubmissionController extends Controller
         // return Submission::with(['owner', 'problem'])->get();
     }
 
-    public function create()
+    public function create($problem_handle)
     {
-        return view('submissions.create');
+        return view('submissions.create', compact('problem_handle'));
     }
 
     // Store a new submission
-    public function store(Request $request,ProblemSubmitterService $submitter)
+    public function store(Request $request,ProblemSubmitterService $submitter, $problem_handle)
     {
 
         $validated = $request->validate([
             'code' => 'required|string',
             'language' => 'required|in:cpp,java,python',
-            'owner_id' => 'required|exists:users,user_handle',
-            'problem_id' => 'required|exists:problems,problem_handle',
         ]);
-        
+
+        // Find problem by handle
+        $problem = Problem::where('problem_handle', $problem_handle)->firstOrFail();
+
+        // Authenticated user
+        // $user = Auth::user();
 
         // Get submitting parameter
-        $url = "";
-        $code = validated['code'];
-        $language = validated['language'];
+        $url = $problem->link;
+        $code = $validated['code'];
+        $language = $validated['language'];
 
         // Submitting solution (sending request to the service)
         $response = $submitter->fetchOnlineJudgeResponse($url,$code,$language);
@@ -48,33 +57,39 @@ class SubmissionController extends Controller
         }
         */
 
-
+        
         // Check structure
         if (
-            !$response ||
+            !$response || 
             !isset($response['online_judge_response']) || 
             !isset($response['original_submission_link'])
         ) {
+            dd(["failed",$response,$url,$code,$language]); // FOR TESTING // 
             return back()->withErrors(['error' => 'Invalid response structure from Online Judge service.']); 
 
         }
+        dd(["GOOD",$response,$url,$code,$language]);
 
         // Store response data
         $online_judge_response = $response["online_judge_response"];
         $original_submission_link = $response["original_submission_link"];
+        
+        // dd(["Still Good",$original_submission_link]);
 
         // Create new row in the Database 
         $submission = Submission::create([
-            'code' => validated["code"],
-            'language' => validated["language"],
+            'code' => $validated["code"],
+            'language' => $validated["language"],
             'result' => $online_judge_response ,
             'original_link' => $original_submission_link ?? null,
             'ai_response' => null,
-            'owner_id' => validated["owner_id"],
-            'problem_id' => validated["problem_id"],
+            'owner_id' => "user->user_handle",
+            'problem_id' => $problem->problem_handle,
         ]);
 
-        return redirect()->route('submissions.show', compact('submission'))
+
+
+        return redirect()->route('submissions.show', $submission->id)
         ->with('success', 'Problem created successfully.');
     }
 
@@ -112,6 +127,6 @@ class SubmissionController extends Controller
         $submission = Submission::findOrFail($id);
         $submission->delete();
 
-        return index();
+        return redirect()->route('submissions.index');
     }
 }

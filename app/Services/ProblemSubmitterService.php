@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ProblemSubmitterService
 {
@@ -16,8 +17,14 @@ class ProblemSubmitterService
 
     /**
      * Call the FastAPI /scrape endpoint with a problem URL.
-     */
-    public function fetchOnlineJudgeResponse(string $url,string $solution_code,string $programming_language): ?array
+    */
+    /*
+    curl -X POST http://localhost:5000/submit -d {"url":"https://www.hackerearth.com/practice/algorithms/searching/linear-search/practice-problems/algorithm/count-mex-8dd2c00c/", "code":"secret","language":"cpp"}
+    response:
+        online_judge_response = str(oj_response),
+        original_submission_link = str(submission_link)
+    */
+     public function fetchOnlineJudgeResponse(string $url,string $solution_code,string $programming_language): ?array
     {
         try {
             $response = Http::post($this->baseUrl . '/submit', [
@@ -25,20 +32,25 @@ class ProblemSubmitterService
                 'code' => $solution_code,
                 'language' => $programming_language,
             ]);
-            /*
-            response:
-                online_judge_response = str(oj_response),
-                original_submission_link = str(submission_link)
-            */
+
             if ($response->successful()) {
                 return $response->json();
             }
+
 
         } catch (\Exception $e) {
             // You could log the error if needed: 
             Log::error($e->getMessage());
         }
 
-        return null;
+        // return null; // DID NOT GET IT // BUT IT IS BREAKING THE SYSTEM
+        // return ["null"]; // DID NOT GET IT // BUT IT IS WORKING
+        return $response;
     }
 }
+
+
+
+
+
+
