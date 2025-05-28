@@ -19,13 +19,20 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['admin', 'user'])->default('user');
 
+            // Social links
+            $table->string('linkedin_url')->nullable();
+            $table->string('github_url')->nullable();
+            $table->string('portfolio_url')->nullable();
+
+            // Activity tracking
+            $table->timestamp('last_active_at')->nullable();
+            $table->timestamp('previous_active_at')->nullable();
+            $table->integer('current_streak')->default(0);
+            $table->integer('max_streak')->default(0);
             $table->integer('solved_problems')->default(0);
-            $table->date('last_active_day')->nullable();
-            $table->integer('streak_days')->default(0);
-            $table->integer('maximum_streak_days')->default(0);
             $table->integer('social_score')->default(0);
             $table->integer('technical_score')->default(0);
-            
+
             $table->rememberToken();
             $table->timestamps();
         });
