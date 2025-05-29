@@ -1,15 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Submissions;
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Submission;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Problem;
-=======
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
@@ -18,15 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Submission;
 use App\Models\Problem;
 
->>>>>>> blogs
-=======
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Submission;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Problem;
->>>>>>> 8287143 (problems almost finished [paused] still need user part and tags part)
 use App\Services\ProblemSubmitterService;
 
 //use App\Http\Controllers\Problems\ProblemController;
@@ -150,3 +133,4 @@ class SubmissionController extends Controller
         return redirect()->route('submissions.index');
     }
 }
+

@@ -98,6 +98,8 @@ function formatLastActive($dateTime)
 
     return $date->format('M j, Y') . ' at ' . $date->format('g:i A');
 }
+
+
 require __DIR__.'/admins.php';
 require __DIR__.'/blogs.php';
 require __DIR__.'/containers.php';
