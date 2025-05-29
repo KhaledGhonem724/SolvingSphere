@@ -8,9 +8,8 @@ use App\Models\Problem;
 
 class ProblemSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    use WithoutModelEvents;
+
     public function run(): void
     {
         // Create 10 problems using the factory
