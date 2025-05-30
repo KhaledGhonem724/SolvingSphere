@@ -42,7 +42,7 @@ class SubmissionController extends Controller
         $problem = Problem::where('problem_handle', $problem_handle)->firstOrFail();
 
         // Authenticated user
-        // $user = Auth::user();
+        $user = Auth::user();
 
         // Get submitting parameter
         $url = $problem->link;
@@ -86,7 +86,7 @@ class SubmissionController extends Controller
             'result' => $online_judge_response ,
             'original_link' => $original_submission_link ?? null,
             'ai_response' => null,
-            'owner_id' => "user->user_handle",
+            'owner_id' => $user->user_handle,
             'problem_id' => $problem->problem_handle,
         ]);
 

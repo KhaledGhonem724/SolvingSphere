@@ -20,9 +20,7 @@ class BlogFactory extends Factory
             'content' => $this->faker->paragraphs(3, true),
             'blog_type' => $this->faker->randomElement(['discussion', 'question', 'explain']),
             'score' => $this->faker->numberBetween(0, 100),
-            'owner_id' => 'default_handle', 
-
-            //'owner_id' => $owner ? $owner->user_handle : 'default_handle', // fallback if no users yet
+            'owner_id' => $owner ? $owner->user_handle : 'default_handle', // fallback if no users yet
         ];
     }
 }

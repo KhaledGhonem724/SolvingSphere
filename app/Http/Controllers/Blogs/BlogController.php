@@ -65,13 +65,13 @@ class BlogController extends Controller
 
     public function edit(Blog $blog)
     {
-        //$this->authorize('update', $blog);
+        $this->authorize('update', $blog);
         return view('blogs.edit', compact('blog'));
     }
 
     public function update(Request $request, Blog $blog)
     {
-        //$this->authorize('update', $blog);
+        $this->authorize('update', $blog);
 
         $validated = $request->validate([
             'title' => 'required|unique:blogs,title,' . $blog->id,
