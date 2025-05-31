@@ -17,5 +17,6 @@ Route::put('blogs/{blog}', [BlogController::class, 'update']);
 Route::delete('blogs/{blog}', [BlogController::class, 'destroy']);
 
 */
-Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
-Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+Route::post('blogs/{blog}/comments', [CommentController::class, 'store'])->name('comments.store');
+
+Route::resource('comments', CommentController::class)->only(['edit', 'update', 'destroy']);
