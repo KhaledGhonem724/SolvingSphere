@@ -1,14 +1,44 @@
-@props(['title', 'description', 'itemLink'])
+@props([
+    'title',
+    'href',
+    'badge' => null,
+    'badgeClass' => null,
+    'meta' => null,
+    'content' => null,
+    'tags' => null,
+])
 
-<div
-    class="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition cursor-pointer"
-    onclick="window.location='{{ $itemLink }}'"
-    role="button"
-    tabindex="0"
-    onkeydown="if(event.key === 'Enter' || event.key === ' ') window.location='{{ $itemLink }}'"
->
-    <h2 class="text-xl font-semibold text-gray-800">{{ $title }}</h2>
-    <p class="text-gray-600 mt-1">{{ $description }}</p>
-    <p class="text-gray-600 mt-1">{{ $itemLink }}</p>
+<div class="p-4 border rounded-xl shadow-sm bg-white hover:shadow-md transition">
+    <!-- Header: Title and Meta -->
+    <div class="flex justify-between items-start">
+        <div class="text-lg font-semibold">
+            <a href="{{ $href }}">{{ $title }}</a>
+        </div>
+        @isset($badge)
+            <span class="px-2 py-1 text-xs font-medium rounded-full {{ $badgeClass }}">
+                {{ $badge }}
+            </span>
+        @endisset
+    </div>
+
+    <!-- Sub Info (owner/time) -->
+    @isset($meta)
+        <div class="text-sm text-gray-500 mt-1">
+            {{ $meta }}
+        </div>
+    @endisset
+
+    <!-- Main Body -->
+    @isset($content)
+        <div class="mt-2 text-sm text-gray-700">
+            {{ $content }}
+        </div>
+    @endisset
+
+    <!-- Footer Tags -->
+    @isset($tags)
+        <div class="mt-3">
+            {{ $tags }}
+        </div>
+    @endisset
 </div>
-

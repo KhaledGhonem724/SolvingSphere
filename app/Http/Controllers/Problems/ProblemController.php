@@ -22,7 +22,6 @@ class ProblemController extends Controller
         return view('problems.create');
     }
 
-
     public function store(Request $request, ProblemScraperService $scraper)
     {
         // Validate the input
@@ -78,25 +77,10 @@ class ProblemController extends Controller
 
     }
 
-
     public function show(string $problem_handle)
     {
         $problem = Problem::findOrFail($problem_handle);
         return view('problems.show', compact('problem'));
     }
-/*
-        return view('problems.show', [
-            'title' => $problem->title,
-            'problemName' => $problem->title,
-            'link' => $problem->link,
-            'website' => $problem->website,
-            'timelimit' => $problem->timelimit,
-            'memorylimit' => $problem->memorylimit,
-            'statement' => $problem->statement,
-            'testcases' => $problem->testcases,
-            'notes' => $problem->notes,
-        ]);
-
-*/
 
 }

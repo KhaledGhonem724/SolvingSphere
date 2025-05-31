@@ -24,6 +24,10 @@ class Problem extends Model
     public function tags(): BelongsToMany { return $this->belongsToMany(Tag::class, 'problem_tag', 'problem_id', 'tag_id'); }
     public function sheets(): BelongsToMany { return $this->belongsToMany(Sheet::class, 'sheet_problem', 'problem_id', 'sheet_id'); }
     public function topicItems(): HasMany { return $this->hasMany(TopicItem::class, 'problem_id'); }
-    public function submissions(): HasMany { return $this->hasMany(Submiton::class, 'problem_id'); }
-    public function solutions(): HasMany { return $this->hasMany(Solution::class, 'problem_id'); }
+    public function submissions(): HasMany {
+        return $this->hasMany(Submission::class, 'problem_id', 'problem_handle');
+    }
+    public function solutions(): HasMany { 
+        return $this->hasMany(Solution::class, 'problem_id'); 
+    }
 }

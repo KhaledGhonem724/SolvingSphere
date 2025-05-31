@@ -48,7 +48,7 @@
 
 
     <!-- comment form + comments list -->
-    <div class="mt-12 space-y-12 max-w-3xl mx-auto">
+    <div class="mt-12 space-y-12 max-w-4xl mx-auto">
         <!-- Card 2 - comment form  -->
         <div class="bg-white p-6 rounded-xl shadow border">
             <h2 class="text-2xl font-semibold mb-4 text-gray-800">Leave a Comment</h2>

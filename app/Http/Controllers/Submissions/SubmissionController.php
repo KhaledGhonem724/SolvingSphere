@@ -67,14 +67,16 @@ class SubmissionController extends Controller
             !isset($response['online_judge_response']) || 
             !isset($response['original_submission_link'])
         ) {
-            dd(["failed",$response,$url,$code,$language]); // FOR TESTING // 
+            //dd(["failed",$response,$url,$code,$language]); // FOR TESTING // 
             return back()->withErrors(['error' => 'Invalid response structure from Online Judge service.']); 
 
         }
-        dd(["GOOD",$response,$url,$code,$language]);
+        //dd(["GOOD",$response,$url,$code,$language]);
 
         // Store response data
-        $online_judge_response = $response["online_judge_response"];
+        // Clean up or normalize response
+
+        $online_judge_response = strtolower($response["online_judge_response"]);
         $original_submission_link = $response["original_submission_link"];
         
         // dd(["Still Good",$original_submission_link]);
@@ -99,38 +101,43 @@ class SubmissionController extends Controller
     // Show a single submission
     public function show($id)
     {
-        // $submission = Submission::with(['owner', 'problem'])->findOrFail($id);
-        $submission = Submission::findOrFail($id);
+        $submission = Submission::with(['owner', 'problem'])->findOrFail($id);
         return view('submissions.show', compact('submission'));
     }
 
-    // Update a submission
-    public function update(Request $request, $id)
+    // Update a submission (refresh it / re-scrape it)
+    public function refresh($id, ProblemSubmitterService $submitter)
     {
-        $submission = Submission::findOrFail($id);
+        // Find the submission or fail
+        $submission = Submission::with('problem')->findOrFail($id);
 
-        $validated = $request->validate([
-            'code' => 'sometimes|string',
-            'language' => 'sometimes|in:cpp,java,python',
-            'result' => 'sometimes|string',
-            'original_link' => 'nullable|url',
-            'ai_response' => 'nullable|string',
-            'owner_id' => 'sometimes|exists:users,user_handle',
-            'problem_id' => 'sometimes|exists:problems,problem_handle',
+        $problem = $submission->problem;
+
+        // Extract data
+        $url = $problem->link;
+        $code = $submission->code;
+        $language = $submission->language;
+
+        // Re-Scrape (NEEDED : update the python code)
+        // $response = $submitter->fetchOnlineJudgeResponse($url, $code, $language);
+
+        if (
+            !$response || 
+            !isset($response['online_judge_response']) || 
+            !isset($response['original_submission_link'])
+        ) {
+            return back()->withErrors(['error' => 'Failed to refresh. Invalid response from Online Judge.']);
+        }
+
+        // Update the submission
+        $submission->update([
+            'result' => $response['online_judge_response'],
+            'original_link' => $response['original_submission_link'],
         ]);
 
-        $submission->update($validated);
-
-        return view('submissions.show', compact('submission'));
+        return redirect()->route('submissions.show', $submission->id)
+                        ->with('success', 'Submission result refreshed successfully.');
     }
 
-    // Delete a submission
-    public function destroy($id)
-    {
-        $submission = Submission::findOrFail($id);
-        $submission->delete();
-
-        return redirect()->route('submissions.index');
-    }
 }
 

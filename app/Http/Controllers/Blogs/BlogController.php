@@ -35,7 +35,7 @@ class BlogController extends Controller
         $blogs = $blogs->with('owner')->latest()->paginate(10)->withQueryString();
 
         return view('blogs.index', [
-            'title' => 'Filtered Blogs',
+            'title' => 'Blogs',
             'blogs' => $blogs,
         ]);
     }

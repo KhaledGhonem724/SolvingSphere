@@ -1,5 +1,5 @@
 <div class="border border-gray-300 rounded-lg p-4 mb-4 {{ $comment->parent_id ? 'ml-8' : '' }} bg-white shadow-sm">
-    <div class="flex items-center justify-between mb-2">
+    <div class="flex items-center justify-between mb-2 ">
         <div>
             <span class="font-semibold text-gray-800">{{ $comment->commenter->name ?? $comment->commenter_id }}</span>
             <span class="text-gray-500 text-xs ml-2">{{ $comment->created_at->diffForHumans() }}</span>
@@ -18,7 +18,9 @@
             >
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="text-sm text-red-600 hover:underline">Delete</button>
+                <button type="submit" class="text-sm text-red-600 hover:underline">
+                    Delete
+                </button>
             </form>
         </div>
 
@@ -38,16 +40,20 @@
         </form>
         @endcan
     </div>
-
-    <p class="text-gray-700 whitespace-pre-line">{{ $comment->content }}</p>
+    <div class="mb-2">
+        <p class="text-gray-700 whitespace-pre-line">{{ $comment->content }}</p>
     
     <!-- reply button -->
-    <button
-        onclick="document.getElementById('reply-form-{{ $comment->id }}').classList.toggle('hidden')"
-        class="text-sm text-blue-600 hover:underline mt-3"
-    >
-        Reply
-    </button>
+        @auth
+            <button
+                onclick="document.getElementById('reply-form-{{ $comment->id }}').classList.toggle('hidden')"
+                class="text-sm text-blue-600 hover:underline mt-2"
+            >
+                Reply
+            </button>
+        @endauth
+    </div>
+
     <!-- reply form -->
     <form
         action="{{ route('comments.store', $comment->blog) }}"
