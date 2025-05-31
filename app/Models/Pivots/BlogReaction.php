@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Pivots;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -8,24 +8,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BlogReaction extends Model
 {
     protected $fillable = [
-        'reaction',   // e.g., 'like', 'dislike', 'insightful'
-        'owner_id',   // foreign key referencing users.user_handle
-        'blog_id'     // foreign key referencing blogs.id
+        'value',   
+        'user_id',   
+        'blog_id'     
     ];
 
-    /**
-     * The user who made the reaction.
-     */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'owner_id', 'user_handle');
+        return $this->belongsTo(User::class, 'user_id', 'user_handle');
     }
 
-    /**
-     * The blog post the reaction belongs to.
-     */
     public function blog(): BelongsTo
     {
-        return $this->belongsTo(Blog::class, 'blog_id');
+        return $this->belongsTo(Blog::class);
     }
 }

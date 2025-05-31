@@ -25,6 +25,37 @@
             
         </div>
 
+        <!-- Reactions -->
+        @auth
+            @php
+                $userReaction = $blog->reactions->firstWhere('user_id', auth()->user()->user_handle)?->value;
+            @endphp
+
+            <div class="flex items-center gap-2 mt-4">
+                <form action="{{ route('blogs.react', [$blog, 'value' => 1]) }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                        class="px-3 py-1 rounded-full text-sm font-semibold border transition 
+                            {{ $userReaction === 1 ? 'bg-green-500 text-white border-green-500' : 'border-gray-300 text-gray-700 hover:bg-green-100' }}">
+                        👍 Upvote
+                    </button>
+                </form>
+
+                <form action="{{ route('blogs.react', [$blog, 'value' => -1]) }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                        class="px-3 py-1 rounded-full text-sm font-semibold border transition 
+                            {{ $userReaction === -1 ? 'bg-red-500 text-white border-red-500' : 'border-gray-300 text-gray-700 hover:bg-red-100' }}">
+                        👎 Downvote
+                    </button>
+                </form>
+
+                <span class="ml-4 text-gray-600">Score: {{ $blog->score }}</span>
+            </div>
+        @endauth
+
+
+
         <!-- Action Buttons -->
         <div class="flex items-center gap-3 mt-4">
             @can('update', $blog)

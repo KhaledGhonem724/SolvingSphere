@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use App\Models\Pivots\BlogReaction;
+
 class Blog extends Model
 {
     use HasFactory;
@@ -28,7 +30,7 @@ class Blog extends Model
     public function comments(): HasMany {
         return $this->hasMany(Comment::class, 'blog_id');
     }
-
+    
     public function reactions(): HasMany {
         return $this->hasMany(BlogReaction::class, 'blog_id');
     }

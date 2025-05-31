@@ -64,11 +64,22 @@ class BlogController extends Controller
     public function show(Blog $blog)
     {
         // Load comments, top-level only, with their replies and commenters
-        $blog->load(['comments' => function ($query) {
+        $blog->load([
+            'comments' => function ($query) {
             $query->whereNull('parent_id')->latest()
                 ->with(['commenter', 'replies.commenter']);
-        }]);
-    
+            },
+            'owner'
+        ]);
+
+        // Load current user's reaction if logged in
+        if (auth()->check()) {
+            $userHandle = auth()->user()->user_handle;
+            $blog->user_reaction = $blog->reactions()->where('user_id', $userHandle)->first();
+        } else {
+            $blog->user_reaction = null;
+        }
+
         // Convert Markdown to HTML
         $converter = new CommonMarkConverter([
             'html_input' => 'escape',
