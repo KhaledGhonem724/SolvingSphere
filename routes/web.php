@@ -1,23 +1,15 @@
 <?php
 
 use App\Http\Controllers\Profiles\PersonalInfoController;
+use App\Http\Controllers\HackerEarthController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\Problems\ProblemController;
-
-
 
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::prefix('problems')->group(function () {
-    Route::get('/', [ProblemController::class, 'index'])->name('problems.index');               // list all problems
-    Route::get('/create', [ProblemController::class, 'create'])->name('problems.create');       // form to add new problem
-    Route::post('/', [ProblemController::class, 'store'])->name('problems.store');              // handle form submission
-    Route::get('/{problem_handle}', [ProblemController::class, 'show'])->name('problems.show');        // show problem details
-});
 
 
 
@@ -57,6 +49,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ],
         ];
 
+        // HackerEarth data
+        $hackerEarthData = null;
+        if ($user->hackerearth_username) {
+            $hackerEarthData = [
+                'username' => $user->hackerearth_username,
+                'points' => $user->hackerearth_points,
+                'contest_rating' => $user->hackerearth_contest_rating,
+                'problems_solved' => $user->hackerearth_problems_solved,
+                'solutions_submitted' => $user->hackerearth_solutions_submitted,
+                'connected_at' => $user->hackerearth_connected_at,
+                'updated_at' => $user->hackerearth_updated_at,
+            ];
+        }
+
         return Inertia::render('profile', [
             'statistics' => $statistics,
             'badges' => $badges,
@@ -65,6 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'github' => $user->github_url,
                 'portfolio' => $user->portfolio_url,
             ],
+            'hackerEarthData' => $hackerEarthData,
         ]);
     })->name('profile');
 
@@ -74,6 +81,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::patch('settings/personal-info', [PersonalInfoController::class, 'update'])
         ->name('settings.personal-info.update');
+
+    // HackerEarth integration routes
+    Route::prefix('api/hackerearth')->group(function () {
+        Route::post('connect', [HackerEarthController::class, 'connect'])->name('hackerearth.connect');
+        Route::post('refresh', [HackerEarthController::class, 'refresh'])->name('hackerearth.refresh');
+        Route::delete('disconnect', [HackerEarthController::class, 'disconnect'])->name('hackerearth.disconnect');
+    });
 });
 
 require __DIR__.'/settings.php';
@@ -105,4 +119,3 @@ require __DIR__.'/blogs.php';
 require __DIR__.'/containers.php';
 require __DIR__.'/groups.php';
 require __DIR__.'/problems.php';
-require __DIR__.'/users.php';

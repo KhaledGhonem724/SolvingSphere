@@ -7,9 +7,8 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx'],
-            ssr: 'resources/js/ssr.tsx',
-            refresh: true,
+            input: 'resources/js/app.tsx',
+            refresh: false,
         }),
         react(),
         tailwindcss(),
@@ -22,4 +21,10 @@ export default defineConfig({
             'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
         },
     },
+    server: {
+        hmr: false,
+        watch: {
+            ignored: ['**'],
+        }
+    }
 });

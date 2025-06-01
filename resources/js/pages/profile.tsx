@@ -2,6 +2,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { CalendarDays, Check, Flame, Github, Linkedin, Trophy, User as UserIcon } from 'lucide-react';
 
+import HackerEarthConnection from '@/components/HackerEarthConnection';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,10 +37,20 @@ interface ProfileProps {
         github?: string;
         portfolio?: string;
     };
+    hackerEarthData?: {
+        username: string;
+        points: number;
+        contest_rating: number;
+        problems_solved: number;
+        solutions_submitted: number;
+        connected_at: string;
+        updated_at: string;
+    } | null;
 }
 
-export default function Profile({ statistics, badges, socialLinks }: ProfileProps) {
-    const { auth } = usePage<SharedData>().props;
+export default function Profile({ statistics, badges, socialLinks, hackerEarthData }: ProfileProps) {
+    /* eslint-disable */
+    const { auth } = usePage().props as any as SharedData;
     const user = auth.user;
 
     return (
@@ -67,7 +78,7 @@ export default function Profile({ statistics, badges, socialLinks }: ProfileProp
                             </div>
                             <div className="text-center">
                                 <h3 className="text-lg font-medium">{user.name}</h3>
-                                <p className="text-muted-foreground text-sm">{user.email}</p>
+                                <p className="text-lg font-medium">{user.user_handle}</p>
                             </div>
                         </div>
 
@@ -229,6 +240,9 @@ export default function Profile({ statistics, badges, socialLinks }: ProfileProp
                             )}
                         </CardContent>
                     </Card>
+
+                    {/* HackerEarth Integration */}
+                    <HackerEarthConnection initialData={hackerEarthData} />
                 </div>
             </div>
         </AppLayout>
