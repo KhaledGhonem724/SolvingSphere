@@ -73,7 +73,19 @@
             Match all selected tags
         </label>
     </div>
-
+    <div class="w-full sm:w-1/2 md:w-1/5 flex items-center gap-2">
+        <input
+            type="checkbox"
+            id="my_blogs_only"
+            name="my_blogs_only"
+            value="1"
+            {{ request()->boolean('my_blogs_only') ? 'checked' : '' }}
+            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        />
+        <label for="my_blogs_only" class="text-gray-700 font-semibold select-none cursor-pointer">
+            My Blogs Only
+        </label>
+    </div>
     <div class="w-full flex gap-3 mt-2">
         <x-button type="submit" class="flex-1">
             Filter

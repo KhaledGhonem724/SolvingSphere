@@ -33,7 +33,9 @@ class BlogController extends Controller
             $blogs->where('owner_id', $request->owner_id);
         }
 
-
+        if($request->boolean('my_blogs_only')){
+            $blogs->where('owner_id', Auth::user()->user_handle);
+        }
 
         if ($request->filled('tags')) {
             $tags = $request->input('tags', []);
