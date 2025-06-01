@@ -38,6 +38,7 @@ class Blog extends Model
     public function tags(): BelongsToMany {
         return $this->belongsToMany(Tag::class, 'blog_tag', 'blog_id', 'tag_id');
     }
+    
 
     public function groups(): BelongsToMany {
         return $this->belongsToMany(Group::class, 'group_blog', 'blog_id', 'group_id');
