@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>{{ $title ?? 'My App' }}</title>
+    <title>{{ $title ?? 'Solving Sphere' }}</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
     <script>

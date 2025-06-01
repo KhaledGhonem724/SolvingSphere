@@ -24,20 +24,27 @@ class UserFactory extends Factory
     public function definition(): array
     {
         $name = fake()->name();
+        $maximum_streak_days = fake()->numberBetween(0,500);
         return [
             'user_handle' => Str::slug($name) . '-' . Str::random(6),
             'name' => $name,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => fake()->password(),
             'remember_token' => Str::random(10),
             'role' => 'user',
-            'solved_problems' => 0,
-            'streak_days' => 0,
-            'maximum_streak_days' => 0,
-            'social_score' => 0,
-            'technical_score' => 0,
+            'solved_problems' => fake()->numberBetween(0,1500),
+            'last_active_at' => now(),
+            'previous_active_at'=> fake()->dateTimeBetween('-1 year','now'),
+            'current_streak'=> 0,
+            'max_streak' => $maximum_streak_days,
+            'social_score' => fake()->numberBetween(0,100),
+            'technical_score' => fake()->numberBetween(0,100),
+            'linkedin_url' => fake()->url(),
+            'github_url' => fake()->url(),
+            'portfolio_url' => fake()->url(),
         ];
+
     }
 
     /**

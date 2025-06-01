@@ -1,26 +1,28 @@
-<x-temp-listing-layout :title="'All Problems'" :pageTitle="'Problems'" >
+<x-temp-general-layout :title="$title ?? 'Problems'">
+    <!-- resources/views/blogs/index.blade.php -->
 
-    <x-slot name="filters">
-        <form>
-            <input type="text" name="search" placeholder="Search problems..." class="border px-2 py-1" />
-        </form>
-    </x-slot>
-<!--
-    <x-slot name="filters">
-        <form>
-            <input type="text" name="search" placeholder="Search problems..." class="border px-2 py-1" />
-        </form>
-    </x-slot>
--->
-    
-    <x-slot name="items">
-        @foreach ($problems as $problem)
-            <x-listing-item
-            :title="$problem['title']"
-            :description="$problem['description'] ?? ''"
-            :itemLink="route('problems.show', $problem['problem_handle'])"
-            />
-        @endforeach
-    </x-slot>
+    <x-listing title="All Problems">
+        <x-slot:creation>
+            <p>Can't find your problem? </p>
+            <x-button href="{{ route('problems.create') }}" color="secondary">
+                Scrape New problem
+            </x-button>
+        </x-slot:creation>
 
-</x-temp-listing-layout>
+        <x-slot:filters>
+            <x-problem.filters/>
+        </x-slot:filters>
+
+        <x-slot:items>
+            @forelse ($problems as $problem)
+                <x-problem.item :problem="$problem" />
+            @empty
+                <p>No problems found.</p>
+            @endforelse
+        </x-slot:items>
+
+
+    </x-listing>
+
+</x-temp-general-layout>
+

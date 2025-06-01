@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('testcases');
             $table->text('notes')->nullable();
             $table->timestamps();
+            
         });
     }
 

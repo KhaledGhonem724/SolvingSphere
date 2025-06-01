@@ -5,6 +5,7 @@ use Inertia\Inertia;
 
 use App\Http\Controllers\Blogs\BlogController;
 use App\Http\Controllers\Blogs\CommentController;
+use App\Http\Controllers\Blogs\BlogReactionController;
 
 Route::resource('blogs', BlogController::class);
 /*
@@ -17,5 +18,10 @@ Route::put('blogs/{blog}', [BlogController::class, 'update']);
 Route::delete('blogs/{blog}', [BlogController::class, 'destroy']);
 
 */
-Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
-Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+Route::resource('comments', CommentController::class)->only(['edit', 'update', 'destroy']);
+
+Route::post('blogs/{blog}/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/blogs/{blog}/react', [BlogReactionController::class, 'store'])->name('blogs.react');
+
+
+

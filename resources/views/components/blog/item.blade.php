@@ -1,0 +1,22 @@
+@props([
+    'blog',
+    'title' => $blog->title,
+    'badge' => ucfirst($blog->blog_type),
+    'badgeClass' => match($blog->blog_type) {
+        'question' => 'bg-blue-100 text-blue-700',
+        'discussion' => 'bg-yellow-100 text-yellow-700',
+        'explain' => 'bg-green-100 text-green-700',
+        default => 'bg-gray-100 text-gray-700',
+    }
+])
+<x-listing-item :title="$title" :href="route('blogs.show', $blog)" :badge="$badge" badgeClass="{{ $badgeClass }}">
+
+
+    <x-slot:meta>
+        Posted by {{ $blog->owner->name }} • {{ $blog->created_at->diffForHumans() }}
+    </x-slot:meta>
+
+    <x-slot:content>
+        {{ Str::limit(strip_tags($blog->content), 200) }}
+    </x-slot:content>
+</x-listing-item>

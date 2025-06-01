@@ -49,19 +49,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ],
         ];
 
-        // HackerEarth data
-        $hackerEarthData = null;
-        if ($user->hackerearth_username) {
-            $hackerEarthData = [
-                'username' => $user->hackerearth_username,
-                'points' => $user->hackerearth_points,
-                'contest_rating' => $user->hackerearth_contest_rating,
-                'problems_solved' => $user->hackerearth_problems_solved,
-                'solutions_submitted' => $user->hackerearth_solutions_submitted,
-                'connected_at' => $user->hackerearth_connected_at,
-                'updated_at' => $user->hackerearth_updated_at,
-            ];
-        }
 
         return Inertia::render('profile', [
             'statistics' => $statistics,
@@ -71,7 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'github' => $user->github_url,
                 'portfolio' => $user->portfolio_url,
             ],
-            'hackerEarthData' => $hackerEarthData,
+            
         ]);
     })->name('profile');
 

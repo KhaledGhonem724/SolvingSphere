@@ -5,31 +5,61 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
+use App\Models\Blog;
 use App\Models\Comment;
 
 class CommentController extends Controller
 {
-    public function store(Request $request)
+    use AuthorizesRequests;
+
+    public function store(Request $request, Blog $blog)
     {
         $validated = $request->validate([
-            'blog_id' => 'required|exists:blogs,id',
-            'content' => 'required',
+            'content' => 'required|string',
             'parent_id' => 'nullable|exists:comments,id',
         ]);
 
         Comment::create([
-            ...$validated,
-            'commenter_id' => Auth::user()->user_handle,
+            'content' => $validated['content'],
+            'commenter_id' => Auth::user()->user_handle, 
+            'blog_id' => $blog->id,
+            'parent_id' => $validated['parent_id'] ?? null,
         ]);
 
-        return redirect()->back()->with('success', 'Comment posted!');
+        return back()->with('success', 'Comment added successfully.');
+    }
+    
+    public function edit(Comment $comment)
+    {
+        $this->authorize('update', $comment);
+        return view('comments.edit', compact('comment'));
+    }
+
+    public function update(Request $request, Comment $comment)
+    {
+        $this->authorize('update', $comment);
+
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $comment->update([
+            'content' => $request->input('content'),
+        ]);
+
+        return redirect()->route('blogs.show', $comment->blog_id)
+            ->with('success', 'Comment updated successfully.');
     }
 
     public function destroy(Comment $comment)
     {
         $this->authorize('delete', $comment);
         $comment->delete();
-        return redirect()->back()->with('success', 'Comment deleted!');
+
+        return redirect()->route('blogs.show', $comment->blog_id)
+            ->with('success', 'Comment deleted successfully.');
     }
+
 }
