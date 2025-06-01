@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ProblemSeeder::class,
             BlogSeeder::class,
+            TagSeeder::class,
+            BlogWithTagsSeeder::class,
         ]);
     }
 }
