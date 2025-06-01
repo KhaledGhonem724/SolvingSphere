@@ -30,5 +30,6 @@ class BlogFactory extends Factory
             'score' => $this->faker->numberBetween(0, 100),
             'owner_id' => $owner ? $owner->user_handle : 'default_handle', // fallback if no users yet
         ];
+
     }
 }
