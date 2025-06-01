@@ -7,8 +7,17 @@
 
         <x-input name="title" label="Title" :value="$blog->title" />
         <x-textarea name="content" label="Content" :value="$blog->content" />
-        <x-select name="blog_type" label="Blog Type" :options="['discussion', 'question', 'explain']" :value="$blog->blog_type" />
-
+        <x-select name="blog_type" 
+            label="Blog Type" 
+            :options="['discussion', 'question', 'explain']" 
+            :value="$blog->blog_type" 
+        />
+        <x-tag-input 
+            name="tags" 
+            label="Tags" 
+            :value="$blog->tags->pluck('name')->join(', ')" 
+            :whitelist="$allTags->pluck('name')" 
+        />
         <button type="submit" class="btn btn-primary mt-4">Update</button>
     </form>
 </x-temp-general-layout>

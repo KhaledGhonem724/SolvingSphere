@@ -15,15 +15,23 @@
             <span class="uppercase tracking-wide text-xs text-blue-500 font-medium">{{ $blog->blog_type }}</span>
         </div>
 
+        <!-- Blog Tags -->
+        @if ($blog->tags->isNotEmpty())
+            <div class="mt-3 flex flex-wrap gap-2">
+                @foreach ($blog->tags as $tag)
+                    <span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+                        {{ $tag->name }}
+                    </span>
+                @endforeach
+            </div>
+        @endif
+
         <!-- Blog Content -->
         <div class="prose max-w-none prose-lg prose-blue">
             <!-- new for TESTING -->
             {!! $blog->parsed_content !!}
-            <!-- OLD for sure 
-            {!! nl2br(e($blog->content)) !!} 
-            -->
-            
         </div>
+
 
         <!-- Reactions -->
         @auth

@@ -19,6 +19,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
+    <!-- Tagify CSS for tags inputs-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+
+    <!-- Tagify JS for tags inputs-->
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
     @vite(['resources/css/app.css', 'resources/js/app.tsx'])
 </head>
 <body class="flex flex-col min-h-screen">
@@ -33,6 +38,7 @@
 
     {{-- Footer Slot, or default footer --}}
     {{ $footer ?? view('components.footer') }}
+    @stack('scripts')
 
 </body>
 </html>

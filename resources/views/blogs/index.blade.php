@@ -10,7 +10,7 @@
         </x-slot:creation>
 
         <x-slot:filters>
-            <x-blog.filters/>
+            <x-blog.filters :allTags="$allTags" />
         </x-slot:filters>
 
         <x-slot:items>
