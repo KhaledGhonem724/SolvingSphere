@@ -52,10 +52,12 @@
         <!-- Problem Content -->
         <div class="prose max-w-none prose-lg prose-blue">
             {!! $problem->statement !!}
+            <!--
             <strong>Test Cases:</strong>
             {!! $problem->testcases !!}
             <strong>Notes:</strong>
             {!! $problem->notes !!}
+            -->
         </div>
 
         <!-- Action Buttons -->
