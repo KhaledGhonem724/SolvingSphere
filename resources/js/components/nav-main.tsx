@@ -1,27 +1,22 @@
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { type NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 
-export function NavMain({ items = [] }: { items: NavItem[] }) {
-    const page = usePage();
+export function NavMain({ items }: { items: NavItem[] }) {
     return (
-        <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
-            <SidebarMenu>
-                {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton  
-                            asChild isActive={item.href === page.url}
-                            tooltip={{ children: item.title }}
-                        >
-                            <Link href={item.href} prefetch>
-                                {item.icon && <item.icon />}
-                                <span>{item.title}</span>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                ))}
-            </SidebarMenu>
-        </SidebarGroup>
+        <nav className="grid gap-2">
+            {items.map((item) => (
+                <Link
+                    key={item.title}
+                    href={item.href}
+                    className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start', 'hover:bg-accent', 'hover:text-accent-foreground')}
+                    prefetch
+                >
+                    <item.icon className="mr-2 size-4" />
+                    {item.title}
+                </Link>
+            ))}
+        </nav>
     );
 }

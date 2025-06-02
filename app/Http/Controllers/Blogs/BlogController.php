@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Blogs;
+
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use App\Models\Blog;
 use App\Models\Tag;
 
 use League\CommonMark\CommonMarkConverter;
+use Inertia\Inertia;
 
 class BlogController extends Controller
 {
@@ -19,134 +21,115 @@ class BlogController extends Controller
 
     public function index(Request $request)
     {
-        $blogs = Blog::query();
+        $query = Blog::with(['owner', 'tags']);
 
-        if ($request->has('title') && $request->title != '') {
-            $blogs->where('title', 'like', '%' . $request->title . '%');
+        // Filter by title
+        if ($request->has('title')) {
+            $query->where('title', 'like', '%' . $request->input('title') . '%');
         }
 
-        if ($request->has('blog_type') && $request->blog_type != 'All') {
-            $blogs->where('blog_type', $request->blog_type);
+        // Filter by blog type
+        if ($request->has('blog_type')) {
+            $query->where('blog_type', $request->input('blog_type'));
         }
 
-        if ($request->has('owner_id') && $request->owner_id != '') {
-            $blogs->where('owner_id', $request->owner_id);
+        // Filter by owner ID
+        if ($request->has('owner_id')) {
+            $query->where('owner_id', $request->input('owner_id'));
         }
 
-
-
-        if ($request->filled('tags')) {
-            $tags = $request->input('tags', []);
+        // Filter by tags
+        if ($request->has('tags')) {
+            $tagIds = $request->input('tags');
             $matchAll = $request->boolean('match_all_tags');
-        
+
             if ($matchAll) {
-                // Match all selected tags (AND)
-                $blogs->whereHas('tags', function ($query) use ($tags) {
-                    $query->whereIn('tags.id', $tags);
-                }, '=', count($tags));
+                // Match all selected tags
+                $query->whereHas('tags', function ($q) use ($tagIds) {
+                    $q->whereIn('tags.id', $tagIds)
+                        ->groupBy('blogs.id')
+                        ->havingRaw('COUNT(DISTINCT tags.id) = ?', [count($tagIds)]);
+                });
             } else {
-                // Match any selected tag (OR)
-                $blogs->whereHas('tags', function ($query) use ($tags) {
-                    $query->whereIn('tags.id', $tags);
+                // Match any of the selected tags
+                $query->whereHas('tags', function ($q) use ($tagIds) {
+                    $q->whereIn('tags.id', $tagIds);
                 });
             }
         }
-        $allTags = Tag::orderBy('name')->get();
 
-        $blogs = $blogs->with('owner')->latest()->paginate(10)->withQueryString();
-        
+        $blogs = $query->latest()->paginate(9);
+        $allTags = Tag::all();
 
-        return view('blogs.index', [
-            'title' => 'Blogs',
+        return Inertia::render('Blogs/Index', [
             'blogs' => $blogs,
-            'allTags' => $allTags,
+            'allTags' => $allTags
         ]);
     }
 
     public function create()
     {
-        $allTags = Tag::orderBy('name')->get();
-        return view('blogs.create', compact('allTags'));
+        $tags = Tag::all();
+        $blogTypes = ['Technical', 'Personal', 'Tutorial', 'Review'];
+
+        return Inertia::render('Blogs/Create', [
+            'tags' => $tags,
+            'blogTypes' => $blogTypes
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|unique:blogs',
+            'title' => 'required|max:255',
             'content' => 'required',
-            'blog_type' => 'in:question,discussion,explain',
-            'tags' => 'nullable|string',
+            'blog_type' => 'required|in:question,discussion,explain',
+            'tags' => 'sometimes|array',
+            'tags.*' => 'exists:tags,id'
         ]);
 
         $blog = Blog::create([
-            ...$validated,
-            'owner_id' => Auth::user()->user_handle,
-        ]); // ...$validated is just merging the array $validated ,
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'blog_type' => $validated['blog_type'],
+            'owner_id' => Auth::id()
+        ]);
 
-        // tags input can be sent as json objets by Tagify
-        $tagsInput = $request->input('tags', '');
-
-
-        if (Str::startsWith($tagsInput, '[')) {
-            // Decode JSON array to get tag values
-            $tagsArray = collect(json_decode($tagsInput))
-                ->map(fn($tag) => trim(Str::lower($tag->value ?? '')))
-                ->filter()
-                ->unique();
-        } else {
-            // Comma-separated string case
-            $tagsArray = collect(explode(',', $tagsInput))
-                ->map(fn($tag) => trim(Str::lower($tag)))
-                ->filter()
-                ->unique();
+        // Attach tags if provided
+        if (isset($validated['tags'])) {
+            $blog->tags()->attach($validated['tags']);
         }
 
-        // Create or get tags
-        $tags = $tagsArray->map(function ($name) {
-            return Tag::firstOrCreate(['name' => $name])->id;
-        });
-
-        // Sync with blog
-        $blog->tags()->sync($tags);
-
-        return redirect()->route('blogs.index')->with('success', 'Blog created!');
+        return redirect()->route('blogs.show', $blog)
+            ->with('success', 'Blog created successfully');
     }
 
     public function show(Blog $blog)
     {
-        // Load comments, top-level only, with their replies and commenters
         $blog->load([
-            'comments' => function ($query) {
-            $query->whereNull('parent_id')->latest()
-                ->with(['commenter', 'replies.commenter']);
-            },
-            'owner'
+            'owner',
+            'tags',
+            'comments.user',
+            'reactions'
         ]);
 
-        // Load current user's reaction if logged in
-        if (auth()->check()) {
-            $userHandle = auth()->user()->user_handle;
-            $blog->user_reaction = $blog->reactions()->where('user_id', $userHandle)->first();
-        } else {
-            $blog->user_reaction = null;
-        }
-
-        // Convert Markdown to HTML
-        $converter = new CommonMarkConverter([
-            'html_input' => 'escape',
-            'allow_unsafe_links' => false,
+        return Inertia::render('Blogs/Show', [
+            'blog' => $blog
         ]);
-    
-        $blog->parsed_content = $converter->convertToHtml($blog->content);
-    
-        return view('blogs.show', compact('blog'));
     }
 
     public function edit(Blog $blog)
     {
         $this->authorize('update', $blog);
-        $allTags = Tag::orderBy('name')->get();
-        return view('blogs.edit', compact(['allTags','blog']));
+
+        $tags = Tag::all();
+        $blogTypes = ['Technical', 'Personal', 'Tutorial', 'Review'];
+
+        return Inertia::render('Blogs/Edit', [
+            'blog' => $blog,
+            'tags' => $tags,
+            'blogTypes' => $blogTypes
+        ]);
     }
 
     public function update(Request $request, Blog $blog)
@@ -154,40 +137,35 @@ class BlogController extends Controller
         $this->authorize('update', $blog);
 
         $validated = $request->validate([
-            'title' => 'required|unique:blogs,title,' . $blog->id,
+            'title' => 'required|max:255',
             'content' => 'required',
-            'blog_type' => 'in:question,discussion,explain',
-            'tags' => 'nullable|string',
+            'blog_type' => 'required|in:question,discussion,explain',
+            'tags' => 'sometimes|array',
+            'tags.*' => 'exists:tags,id'
         ]);
 
-        $blog->update($validated);
+        $blog->update([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'blog_type' => $validated['blog_type']
+        ]);
 
-        $tagsInput = $validated['tags'] ?? '';
-
-        if (Str::startsWith($tagsInput, '[')) {
-            $tagsArray = collect(json_decode($tagsInput))
-                ->map(fn($tag) => trim(Str::lower($tag->value ?? '')))
-                ->filter()
-                ->unique();
-        } else {
-            $tagsArray = collect(explode(',', $tagsInput))
-                ->map(fn($tag) => trim(Str::lower($tag)))
-                ->filter()
-                ->unique();
+        // Sync tags
+        if (isset($validated['tags'])) {
+            $blog->tags()->sync($validated['tags']);
         }
 
-        // Create or get tags and sync in one step
-        $tags = $tagsArray->map(fn($name) => Tag::firstOrCreate(['name' => $name])->id);
-        $blog->tags()->sync($tags);
-
-        return redirect()->route('blogs.show', $blog)->with('success', 'Blog updated!');
+        return redirect()->route('blogs.show', $blog)
+            ->with('success', 'Blog updated successfully');
     }
-
 
     public function destroy(Blog $blog)
     {
         $this->authorize('delete', $blog);
+
         $blog->delete();
-        return redirect()->route('blogs.index')->with('success', 'Blog deleted!');
+
+        return redirect()->route('blogs.index')
+            ->with('success', 'Blog deleted successfully');
     }
 }

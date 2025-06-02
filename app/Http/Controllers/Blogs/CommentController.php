@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Blogs;
+
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
@@ -17,20 +18,19 @@ class CommentController extends Controller
     public function store(Request $request, Blog $blog)
     {
         $validated = $request->validate([
-            'content' => 'required|string',
+            'content' => 'required|string|max:1000',
             'parent_id' => 'nullable|exists:comments,id',
         ]);
 
-        Comment::create([
+        $comment = $blog->comments()->create([
             'content' => $validated['content'],
-            'commenter_id' => Auth::user()->user_handle, 
-            'blog_id' => $blog->id,
+            'commenter_id' => Auth::user()->user_handle,
             'parent_id' => $validated['parent_id'] ?? null,
         ]);
 
-        return back()->with('success', 'Comment added successfully.');
+        return back()->with('success', 'Comment added successfully');
     }
-    
+
     public function edit(Comment $comment)
     {
         $this->authorize('update', $comment);
@@ -61,5 +61,4 @@ class CommentController extends Controller
         return redirect()->route('blogs.show', $comment->blog_id)
             ->with('success', 'Comment deleted successfully.');
     }
-
 }

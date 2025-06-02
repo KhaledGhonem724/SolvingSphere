@@ -4,6 +4,8 @@ use App\Http\Controllers\Profiles\PersonalInfoController;
 use App\Http\Controllers\HackerEarthController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Blogs\BlogController;
+use App\Http\Controllers\Blogs\CommentController;
 
 
 Route::get('/', function () {
@@ -58,7 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'github' => $user->github_url,
                 'portfolio' => $user->portfolio_url,
             ],
-            
+
         ]);
     })->name('profile');
 
@@ -77,8 +79,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
 
 function formatLastActive($dateTime)
 {
@@ -101,9 +103,21 @@ function formatLastActive($dateTime)
 }
 
 
-require __DIR__.'/admins.php';
-require __DIR__.'/blogs.php';
-require __DIR__.'/containers.php';
-require __DIR__.'/groups.php';
-require __DIR__.'/problems.php';
+require __DIR__ . '/admins.php';
+require __DIR__ . '/blogs.php';
+require __DIR__ . '/containers.php';
+require __DIR__ . '/groups.php';
+require __DIR__ . '/problems.php';
 
+// Blog Routes
+Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
+Route::get('/blogs/create', [BlogController::class, 'create'])->name('blogs.create');
+Route::post('/blogs', [BlogController::class, 'store'])->name('blogs.store');
+Route::get('/blogs/{blog}', [BlogController::class, 'show'])->name('blogs.show');
+Route::get('/blogs/{blog}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
+Route::put('/blogs/{blog}', [BlogController::class, 'update'])->name('blogs.update');
+Route::delete('/blogs/{blog}', [BlogController::class, 'destroy'])->name('blogs.destroy');
+
+// Comment Routes
+Route::post('/blogs/{blog}/comments', [CommentController::class, 'store'])
+    ->name('blogs.comments.store');
