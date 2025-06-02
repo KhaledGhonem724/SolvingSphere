@@ -33,8 +33,6 @@ class BlogController extends Controller
             $blogs->where('owner_id', $request->owner_id);
         }
 
-
-
         if ($request->filled('tags')) {
             $tags = $request->input('tags', []);
             $matchAll = $request->boolean('match_all_tags');
@@ -86,7 +84,7 @@ class BlogController extends Controller
         // tags input can be sent as json objets by Tagify
         $tagsInput = $request->input('tags', '');
 
-
+        // Handle Tagify input
         if (Str::startsWith($tagsInput, '[')) {
             // Decode JSON array to get tag values
             $tagsArray = collect(json_decode($tagsInput))

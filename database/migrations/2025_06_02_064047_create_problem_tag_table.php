@@ -6,21 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('problem_tag', function (Blueprint $table) {
-            $table->id();
             $table->string('problem_id');
-            $table->unsignedBigInteger('tag_id');
-            $table->timestamps();
-
             $table->foreign('problem_id')->references('problem_handle')->on('problems')->onDelete('cascade');
-            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
-            $table->index('problem_id');
-            $table->index('tag_id');
+            $table->foreignId('tag_id')->constrained()->onDelete('cascade');
+            $table->primary(['problem_id', 'tag_id']);
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('problem_tag');
