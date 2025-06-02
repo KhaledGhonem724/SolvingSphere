@@ -18,6 +18,11 @@ const mainNavItems: NavItem[] = [
         href: '/profile',
         icon: User,
     },
+    {
+        title: 'Blogs',
+        href: '/blogs',
+        icon: BookOpen,
+    },
 ];
 
 const footerNavItems: NavItem[] = [

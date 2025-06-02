@@ -4,6 +4,8 @@ use App\Http\Controllers\Profiles\PersonalInfoController;
 use App\Http\Controllers\HackerEarthController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Blogs\BlogController;
+use App\Http\Controllers\Blogs\CommentController;
 
 
 Route::get('/', function () {
@@ -58,7 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'github' => $user->github_url,
                 'portfolio' => $user->portfolio_url,
             ],
-            
+
         ]);
     })->name('profile');
 
@@ -77,8 +79,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
 
 function formatLastActive($dateTime)
 {
@@ -99,6 +101,7 @@ function formatLastActive($dateTime)
 
     return $date->format('M j, Y') . ' at ' . $date->format('g:i A');
 }
+
 
 
 require __DIR__.'/admins.php';

@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm as useInertiaForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
 
 import HeadingSmall from '@/components/heading-small';
@@ -22,7 +22,11 @@ export default function Password() {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
-    const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
+    const { data, setData, errors, put, reset, processing, recentlySuccessful } = useInertiaForm<{
+        current_password: string;
+        password: string;
+        password_confirmation: string;
+    }>({
         current_password: '',
         password: '',
         password_confirmation: '',
@@ -34,13 +38,15 @@ export default function Password() {
         put(route('password.update'), {
             preserveScroll: true,
             onSuccess: () => reset(),
-            onError: (errors) => {
-                if (errors.password) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onError: (errors: any) => {
+                const typedErrors = errors as Record<string, string>;
+                if (typedErrors.password) {
                     reset('password', 'password_confirmation');
                     passwordInput.current?.focus();
                 }
 
-                if (errors.current_password) {
+                if (typedErrors.current_password) {
                     reset('current_password');
                     currentPasswordInput.current?.focus();
                 }

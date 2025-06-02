@@ -1,6 +1,6 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm as useInertiaForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
 import DeleteUser from '@/components/delete-user';
@@ -22,12 +22,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 type ProfileForm = {
     name: string;
     email: string;
-}
+};
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
     const { auth } = usePage<SharedData>().props;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
+    const { data, setData, patch, errors, processing, recentlySuccessful } = useInertiaForm<ProfileForm>({
         name: auth.user.name,
         email: auth.user.email,
     });

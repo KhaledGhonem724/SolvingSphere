@@ -1,6 +1,6 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm as useInertiaForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
 import HeadingSmall from '@/components/heading-small';
@@ -36,7 +36,7 @@ interface PersonalInfoProps {
 export default function PersonalInfo({ socialLinks }: PersonalInfoProps) {
     const { auth } = usePage<SharedData>().props;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<PersonalInfoForm>>({
+    const { data, setData, patch, errors, processing, recentlySuccessful } = useInertiaForm<PersonalInfoForm>({
         name: auth.user.name,
         linkedin_url: socialLinks.linkedin_url || '',
         github_url: socialLinks.github_url || '',
