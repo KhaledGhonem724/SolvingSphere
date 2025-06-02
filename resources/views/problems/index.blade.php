@@ -14,8 +14,11 @@
         </x-slot:filters>
 
         <x-slot:items>
+
             @forelse ($problems as $problem)
-                <x-problem.item :problem="$problem" />
+                <x-problem.item :problem="$problem" :userSubmissions="$userSubmissions ?? []" />
+
+                <x-problem.item :problem="$problem" :userSubmissions="$userSubmissions ?? null" />
             @empty
                 <p>No problems found.</p>
             @endforelse

@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Problems;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 use App\Services\ProblemScraperService;
 
 use App\Models\Problem;
 use App\Models\Tag;
+use App\Models\Submission;
 
 class ProblemController extends Controller
 {
@@ -17,18 +19,18 @@ class ProblemController extends Controller
     {
         $problems = Problem::query();
 
-        if ($request->has('title') && $request->title != '') {
+        if ($request->filled('title')) {
             $problems->where('title', 'like', '%' . $request->title . '%');
         }
 
-        if ($request->has('website') && $request->website != 'All') {
+        if ($request->has('website') && $request->website !== 'All') {
             $problems->where('website', $request->website);
         }
 
         if ($request->filled('tags')) {
             $tags = $request->input('tags', []);
             $matchAll = $request->boolean('match_all_tags');
-        
+
             if ($matchAll) {
                 // Match all selected tags (AND)
                 $problems->whereHas('tags', function ($query) use ($tags) {
@@ -41,16 +43,54 @@ class ProblemController extends Controller
                 });
             }
         }
-        $allTags = Tag::orderBy('name')->get();
 
+        $allTags = Tag::orderBy('name')->get();
+        $user = Auth::user();
+
+        // Paginate first
         $problems = $problems->latest()->paginate(10)->withQueryString();
-        
+
+        $userStatus = collect();
+
+        if ($user) {
+            // Map the best result per problem for this user
+            $userStatus = Submission::where('owner_id', $user->user_handle)
+                ->select('problem_id', 'result')
+                ->get()
+                ->groupBy('problem_id')
+                ->map(function ($subs) {
+                    $priority = ['solved' => 1, 'attempted' => 2, 'todo' => 3];
+                    return $subs->sortBy(function ($s) use ($priority) {
+                        return $priority[$s->result] ?? 99;
+                    })->first();
+                });
+
+            // If state filter is applied, filter the paginated problems collection
+            if ($request->filled('state') && $request->state !== 'All') {
+                $state = $request->state;
+                $problems->setCollection(
+                    $problems->getCollection()->filter(function ($problem) use ($userStatus, $state) {
+                        $status = $userStatus[$problem->problem_handle]->result ?? 'todo';
+                        return $status === $state;
+                    })->values()
+                );
+            }
+
+            return view('problems.index', [
+                'title' => 'Problems',
+                'problems' => $problems,
+                'allTags' => $allTags,
+                'userSubmissions' => $userStatus,
+            ]);
+        }
+
         return view('problems.index', [
             'title' => 'Problems',
             'problems' => $problems,
             'allTags' => $allTags,
         ]);
     }
+
     
     public function create()
     {
@@ -78,7 +118,7 @@ class ProblemController extends Controller
             $scraped['status'] !== 'scraped' ||
             !isset($scraped['problem']['problem_handle'])
         ) {
-            dd("FUCK"); // FOR TESTING
+            dd(["FUCK",$scraped]); // FOR TESTING
             return back()->withErrors(['problem-url' => 'Failed to fetch problem data.']);
         }
         /*

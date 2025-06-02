@@ -1,5 +1,6 @@
 @props([
     'title',
+    'sub_title' => null,
     'href',
     'badge' => null,
     'badgeClass' => null,
@@ -12,7 +13,8 @@
     <!-- Header: Title and Meta -->
     <div class="flex justify-between items-start">
         <div class="text-lg font-semibold">
-            <a href="{{ $href }}">{{ $title }}</a>
+            <a class="text-lg font-semibold pr-2" href="{{ $href }}">{{ $title }}</a>
+            <span class="text-base font-normal">{{ $sub_title }}</span>
         </div>
         @isset($badge)
             <span class="px-2 py-1 text-xs font-medium rounded-full {{ $badgeClass }}">

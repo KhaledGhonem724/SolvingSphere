@@ -106,4 +106,5 @@ require __DIR__.'/blogs.php';
 require __DIR__.'/containers.php';
 require __DIR__.'/groups.php';
 require __DIR__.'/problems.php';
+require __DIR__.'/submissions.php';
 

@@ -21,6 +21,16 @@ class BlogController extends Controller
     {
         $blogs = Blog::query();
 
+        $user=Auth::user();
+        $mineOnly = $request->boolean('my_blogs_only');
+
+        if ($mineOnly && isset($user)) {
+            $user_handle = $user->user_handle;
+            $blogs->whereHas('owner', function ($query) use ($user_handle) {
+                $query->where('user_handle',  $user_handle );
+            });
+        }
+
         if ($request->has('title') && $request->title != '') {
             $blogs->where('title', 'like', '%' . $request->title . '%');
         }

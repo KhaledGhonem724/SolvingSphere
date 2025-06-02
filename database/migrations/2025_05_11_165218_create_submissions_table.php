@@ -11,8 +11,9 @@ return new class extends Migration
         Schema::create('submissions', function (Blueprint $table) {
             $table->id();
             $table->text('code');
-            $table->string('language'); // Expected values: cpp, java, python
-            $table->string('result');
+            $table->enum('language',['cpp', 'java', 'python'])->default('cpp');
+            $table->string('oj_response');
+            $table->enum('result',['solved', 'attempted', 'todo'])->default('todo');
             $table->string('original_link')->nullable();
             $table->text('ai_response')->nullable();
             $table->string('owner_id');

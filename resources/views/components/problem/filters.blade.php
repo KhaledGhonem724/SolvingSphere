@@ -1,6 +1,6 @@
 <form method="GET" action="{{ route('problems.index') }}" class="mb-6 flex flex-wrap gap-4 items-end">
     
-<div class="w-full md:w-1/3">
+    <div class="w-full md:w-1/3">
         <x-input 
             name="title" 
             label="Problem Name" 
@@ -17,7 +17,7 @@
             label="Online Judge" 
             :options="[
                 '' => 'All', 
-                'hacker-earth' => 'hacker-earth', 
+                'HackerEarth' => 'HackerEarth', 
                 'McClure-Witting' => 'McClure-Witting', 
                 'leetcode' => 'leetcode'
             ]" 
@@ -27,8 +27,26 @@
             select-class=""
         />
     </div>
-
-    <div class="w-full md:w-2/5 mb-4">
+    @auth
+        <div class="w-full md:w-1/4">
+            <x-select 
+                name="state" 
+                label="Problem State" 
+                :options="[
+                    '' => 'All', 
+                    'solved' => 'solved', 
+                    'attempted' => 'attempted', 
+                    'todo' => 'todo'
+                ]" 
+                :value="request('state')" 
+                class="block w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                label-class="block mb-1 font-semibold text-gray-700"
+                select-class=""
+            />
+        </div>
+    @endauth
+    
+        <div class="w-full md:w-2/5 mb-4">
         <label class="block mb-2 font-semibold text-gray-700">Tags</label>
         <div class="flex flex-wrap gap-3 max-h-40 overflow-y-auto border rounded border-gray-300 p-3 bg-white">
             @foreach ($allTags as $tag)
