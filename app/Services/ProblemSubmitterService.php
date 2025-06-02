@@ -34,7 +34,21 @@ class ProblemSubmitterService
             ]);
 
             if ($response->successful()) {
-                return $response->json();
+                $data = $response->json();
+
+                // Adding result attribute
+                // str_contains($data['online_judge_response'], 'Compilation Error')
+                if (isset($data['online_judge_response']) && 
+                    str_contains($data['online_judge_response'] , "Accepted")) 
+                {
+                    $data['result'] = 'solved';
+                } else {
+                    $data['result'] = 'attempted'; 
+                }
+
+                //return response()->json($data);
+                return $data;
+
             }
 
 

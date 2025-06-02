@@ -15,9 +15,7 @@ class ProblemScraperService
         $this->baseUrl = config('services.scraper.url', 'http://localhost:5000');
     }
 
-    /**
-     * Call the FastAPI /scrape endpoint with a problem URL.
-     */
+    // Call the FastAPI /scrape endpoint with a problem URL.
     public function fetchProblemData(string $url): ?array
     {
         try {
@@ -37,3 +35,21 @@ class ProblemScraperService
         return null;
     }
 }
+/*
+{
+    'status': 'scraped',
+    'problem': 
+        {
+            'problem_handle': string,
+            'link': string url ,
+            'website': 'HackerEarth',
+            'title': string,
+            'timelimit': string(number + " Sec"),
+            'memorylimit':  string(number + " MB"),
+            'statement': string,
+            'testcases': string,
+            'notes': string
+        },
+    'tags': [tag1, tag2, tag3]
+}
+*/

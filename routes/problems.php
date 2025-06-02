@@ -7,20 +7,11 @@ use App\Http\Controllers\Submissions\SubmissionController;
 
 Route::prefix('problems')->group(function () {
     Route::get('/', [ProblemController::class, 'index'])->name('problems.index');               // list all problems
-    Route::get('/create', [ProblemController::class, 'create'])->name('problems.create');       // form to add new problem
-    Route::post('/', [ProblemController::class, 'store'])->name('problems.store');              // handle form submission
+    Route::post('/create', [ProblemController::class, 'store'])->middleware('auth')->name('problems.store');              // handle form submission
+    Route::get('/create', [ProblemController::class, 'create'])->middleware('auth')->name('problems.create');       // form to add new problem
     Route::get('/{problem_handle}', [ProblemController::class, 'show'])->name('problems.show');        // show problem details
-
-    Route::get('/{problem_handle}/submissions', [SubmissionController::class, 'index'])->name('submissions.index');
-    Route::post('/{problem_handle}/submissions', [SubmissionController::class, 'store'])->name('submissions.store');
-    Route::get('/{problem_handle}/submissions/create', [SubmissionController::class, 'create'])->name('submissions.create');
-
-    Route::post('/{problem_handle}/submissions/{id}/refresh', [SubmissionController::class, 'refresh'])->name('submissions.refresh');
-
-});
-
-Route::prefix('submissions')->group(function () {
-    Route::get('/', [SubmissionController::class, 'index'])->name('submissions.index');               // List all submissions
-    Route::get('/{id}', [SubmissionController::class, 'show'])->name('submissions.show');     // Show submission details
-    Route::post('/{id}/refresh', [SubmissionController::class, 'refresh'])->name('submissions.refresh');
+    // not used yet
+    Route::get('/{problem_handle}/submissions', [SubmissionController::class, 'index_by_problem'])->middleware('auth')->name('problem.submissions');
+    Route::post('/{problem_handle}/submissions/create', [SubmissionController::class, 'store'])->middleware('auth')->name('submissions.store');
+    Route::get('/{problem_handle}/submissions/create', [SubmissionController::class, 'create'])->middleware('auth')->name('submissions.create');
 });

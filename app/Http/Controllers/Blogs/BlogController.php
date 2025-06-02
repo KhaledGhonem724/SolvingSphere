@@ -23,9 +23,19 @@ class BlogController extends Controller
     {
         $query = Blog::with(['owner', 'tags']);
 
-        // Filter by title
-        if ($request->has('title')) {
-            $query->where('title', 'like', '%' . $request->input('title') . '%');
+
+        $user=Auth::user();
+        $mineOnly = $request->boolean('my_blogs_only');
+
+        if ($mineOnly && isset($user)) {
+            $user_handle = $user->user_handle;
+            $blogs->whereHas('owner', function ($query) use ($user_handle) {
+                $query->where('user_handle',  $user_handle );
+            });
+        }
+
+        if ($request->has('title') && $request->title != '') {
+            $blogs->where('title', 'like', '%' . $request->title . '%');
         }
 
         // Filter by blog type
@@ -38,9 +48,9 @@ class BlogController extends Controller
             $query->where('owner_id', $request->input('owner_id'));
         }
 
-        // Filter by tags
-        if ($request->has('tags')) {
-            $tagIds = $request->input('tags');
+        if ($request->filled('tags')) {
+            $tags = $request->input('tags', []);
+
             $matchAll = $request->boolean('match_all_tags');
 
             if ($matchAll) {
@@ -89,11 +99,34 @@ class BlogController extends Controller
         ]);
 
         $blog = Blog::create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'blog_type' => $validated['blog_type'],
-            'owner_id' => Auth::id()
-        ]);
+
+            ...$validated,
+            'owner_id' => Auth::user()->user_handle,
+        ]); // ...$validated is just merging the array $validated ,
+
+        // tags input can be sent as json objets by Tagify
+        $tagsInput = $request->input('tags', '');
+
+        // Handle Tagify input
+        if (Str::startsWith($tagsInput, '[')) {
+            // Decode JSON array to get tag values
+            $tagsArray = collect(json_decode($tagsInput))
+                ->map(fn($tag) => trim(Str::lower($tag->value ?? '')))
+                ->filter()
+                ->unique();
+        } else {
+            // Comma-separated string case
+            $tagsArray = collect(explode(',', $tagsInput))
+                ->map(fn($tag) => trim(Str::lower($tag)))
+                ->filter()
+                ->unique();
+        }
+
+        // Create or get tags
+        $tags = $tagsArray->map(function ($name) {
+            return Tag::firstOrCreate(['name' => $name])->id;
+        });
+
 
         // Attach tags if provided
         if (isset($validated['tags'])) {

@@ -18,11 +18,14 @@ class Submission extends Model
         'code',
         'language',
         'result',
+        'oj_response',
         'original_link',
         'ai_response',
         'owner_id',
         'problem_id',
     ];
+    // $table->enum('language',['cpp', 'java', 'python'])->default('cpp');
+    // $table->enum('result',['solved', 'attempted', 'todo'])->default('todo');
 
     // Relationships
     public function owner()

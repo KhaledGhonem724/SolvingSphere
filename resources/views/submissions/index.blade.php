@@ -1,20 +1,26 @@
-<x-temp-listing-layout :title="'All Submissions'" :pageTitle="'Submissions'" >
+<x-temp-general-layout :title="$title ?? 'Submissions'">
+    <!-- resources/views/blogs/index.blade.php -->
 
-    <x-slot name="filters">
-        <form>
-            <input type="text" name="search" placeholder="Search problems..." class="border px-2 py-1" />
-        </form>
-    </x-slot>
-    
-    <x-slot name="items">
-        ha ha
-        @foreach ($submissions as $submission)
-            <x-listing-item
-            :title="$submission['language']"
-            :description="$submission['result'] ?? ''"
-            :itemLink="route('submissions.show', $submission['original_link'])"
-            />
-        @endforeach
-    </x-slot>
+    <x-listing title="All Submissions">
+        <x-slot:creation>
+            <p>Submit your solution!! </p>
+            <x-button href="{{ route('submissions.general.create') }}" color="secondary">
+                Submit Solution
+            </x-button>
+        </x-slot:creation>
+        
+        <x-slot:filters>
+            <x-submission.filters />
+        </x-slot:filters>
 
-</x-temp-listing-layout>
+        <x-slot:items>
+            @forelse ($submissions as $submission)
+                <x-submission.item :submission="$submission" />                
+            @empty
+                <p>No Submissions yet.</p>
+            @endforelse
+        </x-slot:items>
+
+    </x-listing>
+
+</x-temp-general-layout>
