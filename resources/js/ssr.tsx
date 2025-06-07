@@ -10,7 +10,11 @@ createServer((page) =>
     createInertiaApp({
         page,
         render: ReactDOMServer.renderToString,
+
+        // @ts-expect-error
         title: (title) => `${title} - ${appName}`,
+        /* eslint-disable */
+        // @ts-expect-error
         resolve: (name) => resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
         setup: ({ App, props }) => {
             /* eslint-disable */

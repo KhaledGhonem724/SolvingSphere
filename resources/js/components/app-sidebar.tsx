@@ -1,11 +1,20 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar,
+} from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, User } from 'lucide-react';
-import AppLogo from './app-logo';
+import { BookOpen, LayoutGrid, User } from 'lucide-react';
+import AppLogoIcon from './app-logo-icon';
+import SLogoIcon from './charS-logo-icon';
 
 const mainNavItems: NavItem[] = [
     {
@@ -25,28 +34,29 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
-
 export function AppSidebar() {
+    const { state } = useSidebar();
+    const isExpanded = state === 'expanded';
+
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+            <SidebarHeader className="border-border/40 flex items-center justify-center border-b py-4">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton
+                            size="lg"
+                            asChild
+                            tooltip={{
+                                content: 'Solving Sphere',
+                                side: 'right',
+                            }}
+                        >
                             <Link href="/dashboard" prefetch>
-                                <AppLogo />
+                                {isExpanded ? (
+                                    <AppLogoIcon className={`mx-auto h-30 w-30 object-contain transition-all duration-300`} />
+                                ) : (
+                                    <SLogoIcon className={`mx-auto h-16 w-16 object-contain transition-all duration-300`} />
+                                )}
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -57,8 +67,7 @@ export function AppSidebar() {
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+            <SidebarFooter className="border-border/40 border-t">
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
