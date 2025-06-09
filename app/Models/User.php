@@ -11,59 +11,21 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
     protected $primaryKey = 'user_handle';
-
-    /**
-     * The "type" of the primary key ID.
-     *
-     * @var string
-     */
+    public $incrementing = false;
     protected $keyType = 'string';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'user_handle',
-        'name',
-        'email',
-        'password',
-        'role',
-        'solved_problems',
-        'last_active_at',
-        'previous_active_at',
-        'current_streak',
-        'max_streak',
-        'social_score',
-        'technical_score',
-        'linkedin_url',
-        'github_url',
-        'portfolio_url',
+        'name', 'email', 'password',
+        'status', 'role_id',
+        'linkedin_url', 'github_url', 'portfolio_url',
+        'last_active_at', 'previous_active_at',
+        'current_streak','max_streak','solved_problems',
+        'social_score', 'technical_score',
     ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -73,6 +35,18 @@ class User extends Authenticatable
             'previous_active_at' => 'datetime',
         ];
     }
+
+    
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function hasAuthority(string $authorityName): bool
+    {
+        return $this->role?->authorities->contains('name', $authorityName);
+    }
+
 
     public function profile()
     {

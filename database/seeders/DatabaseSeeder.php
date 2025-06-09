@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             BlogWithTagsSeeder::class,
             ProblemWithTagsSeeder::class,
+            RoleAndAuthoritySeeder::class,
+            ReportSeeder::class,
         ]);
     }
 }
