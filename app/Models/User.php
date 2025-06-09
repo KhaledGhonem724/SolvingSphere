@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -77,5 +79,39 @@ class User extends Authenticatable
     public function profile()
     {
         return $this->hasOne(UserProfile::class);
+    }
+
+    /**
+     * Get the groups owned by the user.
+     */
+    public function ownedGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'owner_id', 'user_handle');
+    }
+
+    /**
+     * Get the groups the user is a member of.
+     */
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'group_members', 'user_id', 'group_id')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the group messages created by the user.
+     */
+    public function groupMessages(): HasMany
+    {
+        return $this->hasMany(GroupMessage::class, 'user_id', 'user_handle');
+    }
+
+    /**
+     * Get the group join requests made by the user.
+     */
+    public function groupJoinRequests(): HasMany
+    {
+        return $this->hasMany(GroupJoinRequest::class, 'user_id', 'user_handle');
     }
 }

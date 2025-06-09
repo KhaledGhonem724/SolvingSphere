@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ProblemSeeder::class,
             BlogSeeder::class,
+            GroupsTableSeeder::class,
         ]);
     }
 }
