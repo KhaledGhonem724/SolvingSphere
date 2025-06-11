@@ -15,18 +15,27 @@ interface Tag {
     name: string;
 }
 
-interface CreateBlogProps {
+interface Blog {
+    id: number;
+    title: string;
+    content: string;
+    blog_type: string;
+    tags?: Tag[];
+}
+
+interface EditBlogProps {
+    blog: Blog;
     tags: Tag[];
 }
 
 const blogTypes = ['question', 'discussion', 'explain'];
 
-export default function CreateBlog({ tags }: CreateBlogProps) {
-    const { data, setData, post, processing, errors } = useForm({
-        title: '',
-        content: '',
-        blog_type: blogTypes[0], // Default to first type
-        tags: '',
+export default function EditBlog({ blog, tags }: EditBlogProps) {
+    const { data, setData, put, processing, errors } = useForm({
+        title: blog.title,
+        content: blog.content,
+        blog_type: blog.blog_type,
+        tags: blog.tags ? blog.tags.map((tag) => tag.name) : [],
     });
 
     const tagInputRef = useRef<HTMLInputElement>(null);
@@ -34,12 +43,10 @@ export default function CreateBlog({ tags }: CreateBlogProps) {
 
     useEffect(() => {
         if (tagInputRef.current) {
-            // Destroy existing Tagify instance if it exists
             if (tagifyRef.current) {
                 tagifyRef.current.destroy();
             }
 
-            // Create new Tagify instance
             const tagify = new Tagify(tagInputRef.current, {
                 whitelist: tags.map((tag) => tag.name),
                 maxTags: 10,
@@ -49,19 +56,31 @@ export default function CreateBlog({ tags }: CreateBlogProps) {
                     enabled: 0,
                     closeOnSelect: false,
                 },
-                placeholder: 'Add tags',
+                placeholder: 'Add or type tags',
             });
 
-            // Add event listener to update form data when tags change
+            // Preload existing tags
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+            (tagify as any).addTags(blog.tags?.map((tag) => tag.name) || []);
+
             tagify.on('change', (e: CustomEvent) => {
-                const currentTags = e.detail.value;
-                setData('tags', currentTags);
+                try {
+                    const raw = e.detail.value;
+                    const tagValues =
+                        typeof raw === 'string'
+                            ? (JSON.parse(raw) as Array<{ value: string }>).map((tag) => tag.value)
+                            : (raw as Array<{ value?: string } | string>).map((tag) => (typeof tag === 'string' ? tag : tag.value || ''));
+
+                    setData('tags', tagValues);
+                } catch (err) {
+                    console.error('Error parsing tags', err);
+                    setData('tags', []);
+                }
             });
 
             tagifyRef.current = tagify;
         }
 
-        // Cleanup function
         return () => {
             if (tagifyRef.current) {
                 tagifyRef.current.destroy();
@@ -72,12 +91,17 @@ export default function CreateBlog({ tags }: CreateBlogProps) {
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        post('/blogs', {
+        // Convert tags to a JSON string
+        const tagsToSubmit = JSON.stringify(data.tags);
+
+        put(`/blogs/${blog.id}`, {
+            ...data,
+            tags: tagsToSubmit,
             onSuccess: () => {
-                console.log('Blog created successfully');
+                console.log('Blog updated successfully');
             },
             onError: (errors: Record<string, string>) => {
-                console.error('Blog creation errors:', errors);
+                console.error('Blog update errors:', errors);
             },
         });
     };
@@ -85,11 +109,11 @@ export default function CreateBlog({ tags }: CreateBlogProps) {
     return (
         <AppSidebarLayout>
             <div className="container mx-auto px-4 py-8">
-                <Head title="Create New Blog" />
+                <Head title={`Edit: ${blog.title}`} />
 
                 <Card className="mx-auto max-w-2xl">
                     <CardHeader>
-                        <CardTitle>Create a New Blog</CardTitle>
+                        <CardTitle>Edit Blog</CardTitle>
                     </CardHeader>
 
                     <CardContent>
@@ -138,13 +162,18 @@ export default function CreateBlog({ tags }: CreateBlogProps) {
 
                             <div>
                                 <Label htmlFor="tags">Tags</Label>
-                                <Input id="tags" ref={tagInputRef} placeholder="Add tags" />
+                                <Input id="tags" ref={tagInputRef} placeholder="Add or type tags" />
                                 {errors.tags && <p className="mt-1 text-sm text-red-500">{errors.tags}</p>}
                             </div>
 
-                            <Button type="submit" disabled={processing} className="w-full">
-                                {processing ? 'Publishing...' : 'Publish Blog'}
-                            </Button>
+                            <div className="flex gap-4">
+                                <Button type="submit" disabled={processing} className="flex-1">
+                                    {processing ? 'Updating...' : 'Update Blog'}
+                                </Button>
+                                <Button type="button" variant="outline" onClick={() => window.history.back()} className="flex-1">
+                                    Cancel
+                                </Button>
+                            </div>
                         </form>
                     </CardContent>
                 </Card>
