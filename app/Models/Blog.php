@@ -19,32 +19,38 @@ class Blog extends Model
         'title',
         'content',
         'blog_type',
-        'score', 
+        'score',
         'owner_id'
     ];
 
-    public function owner(): BelongsTo {
+    public function owner(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'owner_id', 'user_handle');
     }
 
-    public function comments(): HasMany {
+    public function comments(): HasMany
+    {
         return $this->hasMany(Comment::class, 'blog_id');
     }
-    
-    public function reactions(): HasMany {
+
+    public function reactions(): HasMany
+    {
         return $this->hasMany(BlogReaction::class, 'blog_id');
     }
 
-    public function tags(): BelongsToMany {
+    public function tags(): BelongsToMany
+    {
         return $this->belongsToMany(Tag::class, 'blog_tag', 'blog_id', 'tag_id');
     }
-    
 
-    public function groups(): BelongsToMany {
+
+    public function groups(): BelongsToMany
+    {
         return $this->belongsToMany(Group::class, 'group_blog', 'blog_id', 'group_id');
     }
 
-    public function solutions(): HasMany {
+    public function solutions(): HasMany
+    {
         return $this->hasMany(Solution::class, 'blog_id');
     }
 }

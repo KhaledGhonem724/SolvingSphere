@@ -24,7 +24,7 @@ export default defineConfig({
     server: {
         hmr: false,
         watch: {
-            ignored: ['**'],
-        }
-    }
+            ignored: ['node_modules/**'],
+        },
+    },
 });

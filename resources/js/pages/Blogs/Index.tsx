@@ -1,19 +1,45 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
+// Utility function to format time ago
+function formatTimeAgo(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    const units = [
+        { name: 'year', seconds: 31536000 },
+        { name: 'month', seconds: 2592000 },
+        { name: 'week', seconds: 604800 },
+        { name: 'day', seconds: 86400 },
+        { name: 'hour', seconds: 3600 },
+        { name: 'minute', seconds: 60 },
+        { name: 'second', seconds: 1 },
+    ];
+
+    for (const unit of units) {
+        const value = Math.floor(diffInSeconds / unit.seconds);
+        if (value >= 1) {
+            return `${value} ${unit.name}${value > 1 ? 's' : ''} ago`;
+        }
+    }
+
+    return 'just now';
+}
+
 interface Blog {
     id: number;
     title: string;
     content: string;
+    blog_type: string;
     owner: {
-        name: string;
+        user_handle: string;
     };
     tags: Array<{ id: number; name: string }>;
     created_at: string;
@@ -26,18 +52,27 @@ interface BlogIndexProps {
         last_page: number;
     };
     allTags: Array<{ id: number; name: string }>;
+    filters: {
+        title: string;
+        blog_type: string;
+        owner_id: string;
+        tags: number[];
+        match_all_tags: boolean;
+        my_blogs_only: boolean;
+    };
 }
 
-export default function BlogIndex({ blogs, allTags }: BlogIndexProps) {
+export default function BlogIndex({ blogs, allTags, filters: initialFilters }: BlogIndexProps) {
     const [filters, setFilters] = useState({
-        title: '',
-        blog_type: '',
-        owner_id: '',
-        tags: [] as number[],
-        match_all_tags: false,
+        title: initialFilters.title || '',
+        blog_type: initialFilters.blog_type || 'all',
+        user_handle: initialFilters.owner_id || '',
+        tags: initialFilters.tags || [],
+        match_all_tags: initialFilters.match_all_tags || false,
+        my_blogs_only: initialFilters.my_blogs_only || false,
     });
 
-    const handleFilterChange = (key: string, value: any) => {
+    const handleFilterChange = (key: 'title' | 'blog_type' | 'user_handle' | 'match_all_tags' | 'my_blogs_only', value: string | boolean) => {
         setFilters((prev) => ({
             ...prev,
             [key]: value,
@@ -45,10 +80,23 @@ export default function BlogIndex({ blogs, allTags }: BlogIndexProps) {
     };
 
     const handleTagToggle = (tagId: number) => {
-        setFilters((prev) => ({
-            ...prev,
-            tags: prev.tags.includes(tagId) ? prev.tags.filter((id) => id !== tagId) : [...prev.tags, tagId],
-        }));
+        setFilters((prev) => {
+            const currentTags = [...prev.tags];
+            const tagIndex = currentTags.indexOf(tagId);
+
+            if (tagIndex > -1) {
+                // Tag is already selected, remove it
+                currentTags.splice(tagIndex, 1);
+            } else {
+                // Tag is not selected, add it
+                currentTags.push(tagId);
+            }
+
+            return {
+                ...prev,
+                tags: currentTags,
+            };
+        });
     };
 
     const applyFilters = () => {
@@ -59,16 +107,36 @@ export default function BlogIndex({ blogs, allTags }: BlogIndexProps) {
         if (filters.blog_type && filters.blog_type !== 'all') {
             queryParams.append('blog_type', filters.blog_type);
         }
-        if (filters.owner_id) queryParams.append('owner_id', filters.owner_id);
+        if (filters.user_handle) queryParams.append('owner_id', filters.user_handle);
+
+        // Correctly append tags
         if (filters.tags.length > 0) {
             filters.tags.forEach((tag) => queryParams.append('tags[]', tag.toString()));
         }
+
         if (filters.match_all_tags) {
             queryParams.append('match_all_tags', '1');
         }
 
+        // Add my blogs only filter
+        if (filters.my_blogs_only) {
+            queryParams.append('my_blogs_only', '1');
+        }
+
         // Navigate to the filtered route
         window.location.href = `/blogs?${queryParams.toString()}`;
+    };
+
+    const resetFilters = () => {
+        setFilters({
+            title: '',
+            blog_type: 'all',
+            user_handle: '',
+            tags: [],
+            match_all_tags: false,
+            my_blogs_only: false,
+        });
+        window.location.href = '/blogs';
     };
 
     return (
@@ -90,60 +158,63 @@ export default function BlogIndex({ blogs, allTags }: BlogIndexProps) {
                             <SelectItem value="explain">Explain</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Input placeholder="Owner ID" value={filters.owner_id} onChange={(e) => handleFilterChange('owner_id', e.target.value)} />
+                    <Input
+                        placeholder="Filter by User Handle"
+                        value={filters.user_handle}
+                        onChange={(e) => handleFilterChange('user_handle', e.target.value)}
+                    />
                 </div>
 
                 {/* Tags Filter */}
+                {/* Tags Filter */}
                 <div className="mb-8">
                     <h3 className="mb-4 text-lg font-semibold">Filter by Tags</h3>
-                    <div className="flex flex-wrap gap-4">
-                        {allTags.map((tag) => (
-                            <div key={tag.id} className="flex items-center space-x-2">
-                                <Checkbox
-                                    id={`tag-${tag.id}`}
-                                    checked={filters.tags.includes(tag.id)}
-                                    onCheckedChange={() => handleTagToggle(tag.id)}
-                                />
-                                <label
-                                    htmlFor={`tag-${tag.id}`}
-                                    className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    <div className="flex flex-wrap gap-2">
+                        {allTags.map((tag) => {
+                            const isSelected = filters.tags.includes(tag.id);
+                            return (
+                                <Button
+                                    key={tag.id}
+                                    variant={isSelected ? 'default' : 'outline'}
+                                    className={`rounded-full px-4 py-1 text-sm ${isSelected ? 'bg-green-500 text-white' : ''}`}
+                                    onClick={() => handleTagToggle(tag.id)}
                                 >
                                     {tag.name}
-                                </label>
-                            </div>
-                        ))}
+                                </Button>
+                            );
+                        })}
                     </div>
-                    <div className="mt-4 flex items-center space-x-2">
-                        <Checkbox
-                            id="match-all-tags"
-                            checked={filters.match_all_tags}
-                            onCheckedChange={(checked) => handleFilterChange('match_all_tags', checked)}
-                        />
-                        <label
-                            htmlFor="match-all-tags"
-                            className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+
+                    {/* Match all tags checkbox remains the same */}
+                    <div className="mt-4 flex items-center space-x-4">
+                        <span className="text-sm font-medium">Match All Selected Tags</span>
+                        <button
+                            onClick={() => handleFilterChange('match_all_tags', !filters.match_all_tags)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                                filters.match_all_tags ? 'bg-green-500' : 'bg-gray-300'
+                            }`}
                         >
-                            Match all selected tags
-                        </label>
+                            <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                                    filters.match_all_tags ? 'translate-x-6' : 'translate-x-1'
+                                }`}
+                            />
+                        </button>
                     </div>
                 </div>
 
                 {/* Filter Buttons */}
-                <div className="mb-8 flex space-x-4">
+                <div className="mb-8 flex items-center space-x-4">
                     <Button onClick={applyFilters}>Apply Filters</Button>
-                    <Button
-                        variant="secondary"
-                        onClick={() =>
-                            setFilters({
-                                title: '',
-                                blog_type: '',
-                                owner_id: '',
-                                tags: [],
-                                match_all_tags: false,
-                            })
-                        }
-                    >
+                    <Button variant="secondary" onClick={resetFilters}>
                         Reset Filters
+                    </Button>
+                    <Button
+                        variant={filters.my_blogs_only ? 'default' : 'outline'}
+                        className={`rounded-full px-4 py-1 text-sm ${filters.my_blogs_only ? 'bg-green-500 text-white' : ''}`}
+                        onClick={() => handleFilterChange('my_blogs_only', !filters.my_blogs_only)}
+                    >
+                        Show My Blogs Only
                     </Button>
                 </div>
 
@@ -158,7 +229,12 @@ export default function BlogIndex({ blogs, allTags }: BlogIndexProps) {
                     {blogs.data.map((blog) => (
                         <Card key={blog.id} className="transition-shadow hover:shadow-lg">
                             <CardHeader>
-                                <CardTitle>{blog.title}</CardTitle>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle>{blog.title}</CardTitle>
+                                    <Badge variant="outline" className="capitalize">
+                                        {blog.blog_type}
+                                    </Badge>
+                                </div>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-muted-foreground line-clamp-3">{blog.content}</p>
@@ -171,7 +247,10 @@ export default function BlogIndex({ blogs, allTags }: BlogIndexProps) {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex items-center justify-between">
-                                <div className="text-muted-foreground text-sm">By {blog.owner.name}</div>
+                                <div className="text-muted-foreground text-sm">
+                                    <div>By {blog.owner.user_handle}</div>
+                                    <div>{formatTimeAgo(blog.created_at)}</div>
+                                </div>
                                 <Link href={`/blogs/${blog.id}`}>
                                     <Button variant="outline" size="sm">
                                         Read More
