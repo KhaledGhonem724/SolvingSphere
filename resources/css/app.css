@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -161,5 +160,66 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+}
+@layer utilities {
+    .star {
+        @apply absolute bg-white rounded-full;
+        width: var(--star-size);
+        height: var(--star-size);
+        left: var(--left);
+        top: var(--top);
+        animation: moveStar var(--duration) linear var(--delay) infinite;
+        opacity: var(--opacity);
+    }
+    
+    .flashlight {
+        @apply fixed w-64 h-64 rounded-full pointer-events-none z-5;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+        filter: blur(10px);
+        transform: translate(-50%, -50%);
+        will-change: transform;
+    }
+
+    @keyframes moveStar {
+        0% {
+            transform: translate(0, 0);
+            opacity: 0.3;
+        }
+        50% {
+            opacity: 0.8;
+        }
+        100% {
+            transform: translate(var(--move-x), var(--move-y));
+            opacity: 0.3;
+        }
+    }
+
+    @keyframes glow-stars {
+        0%, 100% {
+            opacity: 0.3;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+
+    .animate-glow-stars {
+        animation: glow-stars 4s ease-in-out infinite;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 2s ease forwards;
     }
 }

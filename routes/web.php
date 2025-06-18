@@ -1,24 +1,22 @@
 <?php
 
 use App\Http\Controllers\Profiles\PersonalInfoController;
+use App\Http\Controllers\Containers\SheetController;
 use App\Http\Controllers\HackerEarthController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;    
 use Inertia\Inertia;
-use App\Http\Controllers\Blogs\BlogController;
-use App\Http\Controllers\Blogs\CommentController;
 
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-
-
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
-    })->name('dashboard');
+    }
+    )->name('dashboard');
 
     // Profile routes
     Route::get('profile', function () {
@@ -79,8 +77,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
 
 function formatLastActive($dateTime)
 {
@@ -103,11 +101,11 @@ function formatLastActive($dateTime)
 }
 
 
-
 require __DIR__.'/admins.php';
 require __DIR__.'/blogs.php';
 require __DIR__.'/containers.php';
 require __DIR__.'/groups.php';
 require __DIR__.'/problems.php';
 require __DIR__.'/submissions.php';
+require __DIR__.'/home.php';
 
