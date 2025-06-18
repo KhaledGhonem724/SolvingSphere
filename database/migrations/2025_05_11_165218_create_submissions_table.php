@@ -13,7 +13,7 @@ return new class extends Migration
             $table->text('code');
             $table->enum('language',['cpp', 'java', 'python'])->default('cpp');
             $table->string('oj_response');
-            $table->enum('result',['solved', 'attempted', 'todo'])->default('todo');
+            $table->enum('result',['succeeded', 'failed'])->default('failed');
             $table->string('original_link')->nullable();
             $table->text('ai_response')->nullable();
             $table->string('owner_id');

@@ -10,19 +10,20 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
 class Report extends Model
 {
     use HasFactory;
+    public const REPORT_TYPES = ['scientific', 'ethical', 'technical', 'other'];
+    public const REPORTABLE_TYPES = ['blog','comment','problem','user','group','sheet','topic','roadmap'];
 
     protected $fillable = [
         'user_id',
         'type',
         'message',
         'status',
-        'assignee_id',
         'reportable_type',
         'reportable_id',
-        'admin_notes',
     ];
 
     protected $casts = [
@@ -40,20 +41,7 @@ class Report extends Model
         return $this->belongsTo(User::class, 'user_id', 'user_handle');
     }
 
-    public function assignee(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'assignee_id', 'user_handle');
-    }
-
     // === SCOPES ===
-
-    public function scopeUnresolved(Builder $query): Builder
-    {
-        return $query->whereNotIn('status', [
-            ReportStatus::Resolved, 
-            ReportStatus::Dropped,
-        ]);
-    }
 
     public function scopeByUser(Builder $query, string $userHandle): Builder
     {
@@ -70,8 +58,4 @@ class Report extends Model
         return $query->where('status', $status);
     }
 
-    public function scopeAssignedTo(Builder $query, string $assigneeHandle): Builder
-    {
-        return $query->where('assignee_id', $assigneeHandle);
-    }
 }

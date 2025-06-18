@@ -21,16 +21,11 @@ return new class extends Migration
             // Type of report
             $table->enum('type', ['scientific', 'ethical', 'technical', 'other']);
 
-            // Notes
+            // message
             $table->text('message')->nullable();
-            $table->text('admin_notes')->nullable();
 
             // Status
-            $table->enum('status', ['new', 'assigned', 'under_review', 'resolved', 'dropped'])->default('new');
-
-            // Assigned moderator (custom PK)
-            $table->string('assignee_id')->nullable();
-            $table->foreign('assignee_id')->references('user_handle')->on('users')->nullOnDelete();
+            $table->enum('status', ['new', 'reviewed', 'ignored'])->default('new');
 
             // Polymorphic relation (nullable)
             $table->unsignedBigInteger('reportable_id')->nullable();

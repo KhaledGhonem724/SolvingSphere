@@ -41,9 +41,9 @@ class ProblemSubmitterService
                 if (isset($data['online_judge_response']) && 
                     str_contains($data['online_judge_response'] , "Accepted")) 
                 {
-                    $data['result'] = 'solved';
+                    $data['result'] = 'succeeded';
                 } else {
-                    $data['result'] = 'attempted'; 
+                    $data['result'] = 'failed'; 
                 }
 
                 //return response()->json($data);

@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'password' => "z5wXWs4imSEFtJ5",
             'remember_token' => "z5wXWs4imSEFtJ5",
             'status' => 'admin',
-            'role_id' => NULL,
+            'role_id' => 1,
             'solved_problems' => 99,
             'last_active_at' => now(),
             'previous_active_at'=> now(),
