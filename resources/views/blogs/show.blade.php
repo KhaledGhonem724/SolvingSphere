@@ -4,6 +4,15 @@
         <!-- Blog Title -->
         <h1 class="text-4xl font-bold text-gray-900 leading-tight">{{ $blog->title }}</h1>
 
+        <a
+            href="{{ route('public.reports.create', ['type' => 'blog', 'id' => $blog->id]) }}"
+            class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+            Report
+        </a>
+
+
+        
         <!-- Author and Meta -->
         <div class="flex items-center text-sm text-gray-500 space-x-4">
             <span>

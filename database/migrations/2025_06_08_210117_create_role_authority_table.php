@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('problem_tag', function (Blueprint $table) {
-            $table->foreignId('tag_id')->constrained()->onDelete('cascade');
-            $table->foreignId('problem_id')->constrained()->onDelete('cascade');
-            $table->primary(['problem_id', 'tag_id']);
+        Schema::create('role_authority', function (Blueprint $table) {
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('authority_id')->constrained()->onDelete('cascade');
+            $table->primary(['role_id', 'authority_id']);
         });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('problem_tag');
+        Schema::dropIfExists('role_authority');
     }
 };

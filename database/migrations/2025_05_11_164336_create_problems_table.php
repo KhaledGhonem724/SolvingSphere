@@ -10,7 +10,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('problems', function (Blueprint $table) {
-            $table->string('problem_handle')->primary();
+            $table->id();
+            $table->string('problem_handle')->unique();
             $table->string('link');
             $table->string('website');
             $table->string('title');

@@ -186,9 +186,9 @@ class ProblemController extends Controller
 
     }
 
-    public function show(string $problem_handle)
+    public function show(Problem $problem)
     {
-        $problem = Problem::findOrFail($problem_handle);
+        // $problem = Problem::findOrFail($problem_handle);
         return view('problems.show', compact('problem'));
     }
 

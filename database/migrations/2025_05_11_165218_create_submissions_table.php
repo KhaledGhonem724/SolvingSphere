@@ -13,15 +13,14 @@ return new class extends Migration
             $table->text('code');
             $table->enum('language',['cpp', 'java', 'python'])->default('cpp');
             $table->string('oj_response');
-            $table->enum('result',['solved', 'attempted', 'todo'])->default('todo');
+            $table->enum('result',['succeeded', 'failed'])->default('failed');
             $table->string('original_link')->nullable();
             $table->text('ai_response')->nullable();
             $table->string('owner_id');
-            $table->string('problem_id');
+            $table->foreignId('problem_id')->constrained('problems')->onDelete('cascade');
             $table->timestamps();
 
             $table->foreign('owner_id')->references('user_handle')->on('users')->onDelete('cascade');
-            $table->foreign('problem_id')->references('problem_handle')->on('problems')->onDelete('cascade');
             $table->index('owner_id');
             $table->index('problem_id');
         });

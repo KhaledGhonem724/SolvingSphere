@@ -35,6 +35,6 @@ class Submission extends Model
 
     public function problem()
     {
-        return $this->belongsTo(Problem::class, 'problem_id', 'problem_handle');
+        return $this->belongsTo(Problem::class, 'problem_id');
     }
 }
