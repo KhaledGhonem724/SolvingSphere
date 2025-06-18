@@ -12,20 +12,26 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, User, FileText } from 'lucide-react';
+
+import { BookOpen, Code, FileText, Home, ShieldCheck, User, Users } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
 import SLogoIcon from './charS-logo-icon';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
+        title: 'Home',
+        href: '/',
+        icon: Home,
     },
     {
-        title: 'Profile',
-        href: '/profile',
-        icon: User,
+        title: 'Problems',
+        href: '/problems',
+        icon: Code,
+    },
+    {
+        title: 'Submissions',
+        href: '/submissions',
+        icon: FileText,
     },
     {
         title: 'Sheets',
@@ -33,9 +39,25 @@ const mainNavItems: NavItem[] = [
         icon: FileText,
     },
     {
+        title: 'Groups',
+        href: '/groups',
+        icon: Users,
+    },
+    {
         title: 'Blogs',
         href: '/blogs',
         icon: BookOpen,
+    },
+    {
+        title: 'Profile',
+        href: '/profile',
+        icon: User,
+    },
+    {
+
+        title: 'Admin',
+        href: '/admin',
+        icon: ShieldCheck,
     },
 ];
 
@@ -68,7 +90,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className="flex h-full flex-col justify-start space-y-6 py-8">
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 

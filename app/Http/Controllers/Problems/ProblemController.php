@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Problems;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Inertia\Inertia;
 
 use App\Services\ProblemScraperService;
 
@@ -23,7 +23,7 @@ class ProblemController extends Controller
             $problems->where('title', 'like', '%' . $request->title . '%');
         }
 
-        if ($request->has('website') && $request->website !== 'All') {
+        if ($request->has('website') && $request->website !== '') {
             $problems->where('website', $request->website);
         }
 
@@ -76,7 +76,7 @@ class ProblemController extends Controller
                 );
             }
 
-            return view('problems.index', [
+            return Inertia::render('problems/Index', [
                 'title' => 'Problems',
                 'problems' => $problems,
                 'allTags' => $allTags,
@@ -84,7 +84,7 @@ class ProblemController extends Controller
             ]);
         }
 
-        return view('problems.index', [
+        return Inertia::render('problems/Index', [
             'title' => 'Problems',
             'problems' => $problems,
             'allTags' => $allTags,
