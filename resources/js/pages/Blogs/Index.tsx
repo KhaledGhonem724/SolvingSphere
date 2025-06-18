@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -139,8 +140,15 @@ export default function BlogIndex({ blogs, allTags, filters: initialFilters }: B
         window.location.href = '/blogs';
     };
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Blogs',
+            href: '/blogs',
+        },
+    ];
+
     return (
-        <AppSidebarLayout>
+        <AppSidebarLayout breadcrumbs={breadcrumbs}>
             <div className="container mx-auto px-4 py-8">
                 <Head title="Blogs" />
 
@@ -165,7 +173,6 @@ export default function BlogIndex({ blogs, allTags, filters: initialFilters }: B
                     />
                 </div>
 
-                {/* Tags Filter */}
                 {/* Tags Filter */}
                 <div className="mb-8">
                     <h3 className="mb-4 text-lg font-semibold">Filter by Tags</h3>

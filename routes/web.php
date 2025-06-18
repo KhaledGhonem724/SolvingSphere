@@ -25,12 +25,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $user = \Illuminate\Support\Facades\Auth::user();
 
         $statistics = [
-            'solvedProblems' => 42, // This would come from your problems table
+            'solvedProblems' => 12, // This would come from your problems table
             'lastActiveDay' => $user->previous_active_at ? formatLastActive($user->previous_active_at) : 'Never',
             'streakDays' => $user->current_streak ?? 0,
             'maxStreakDays' => $user->max_streak ?? 0,
-            'technicalScore' => 820, // This would be calculated based on your scoring system
-            'socialScore' => 450, // This would be calculated based on your scoring system
+            'technicalScore' => 80, // This would be calculated based on your scoring system
+            'socialScore' => 20, // This would be calculated based on your scoring system
         ];
 
         $badges = [
@@ -42,7 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             [
                 'id' => 2,
                 'name' => 'Consistency King',
-                'description' => 'Maintained a 7-day streak',
+                'description' => 'Maintained a 3-day streak',
             ],
             [
                 'id' => 3,

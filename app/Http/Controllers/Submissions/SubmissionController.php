@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Submissions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 use App\Services\ProblemSubmitterService;
-
 
 use App\Models\Submission;
 use App\Models\Problem;
@@ -44,16 +44,18 @@ class SubmissionController extends Controller
             });
         }
         
-        if ($request->has('result') && $request->result != 'All') {
+        if ($request->has('result') && $request->result != '') {
             $submissions->where('result', $request->result);
         }
 
-        if ($request->has('language') && $request->language != 'All') {
+        if ($request->has('language') && $request->language != '') {
             $submissions->where('language', $request->language);
         }
         $submissions = $submissions->with('problem')->get();
 
-        return view('submissions.index', compact('submissions'));
+        return Inertia::render('submissions/Index', [
+            'submissions' => $submissions,
+        ]);
     }
 
     public function index_by_problem($problem_handle) {
