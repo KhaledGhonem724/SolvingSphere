@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, LayoutGrid, User } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, User, FileText } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
 import SLogoIcon from './charS-logo-icon';
 
@@ -26,6 +26,11 @@ const mainNavItems: NavItem[] = [
         title: 'Profile',
         href: '/profile',
         icon: User,
+    },
+    {
+        title: 'Sheets',
+        href: '/sheet',
+        icon: FileText,
     },
     {
         title: 'Blogs',
