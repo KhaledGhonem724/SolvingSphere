@@ -16,10 +16,15 @@ class Sheet extends Model
         'share_token',
     ];
 
-   
+
     public function problems()
     {
-        return $this->belongsToMany(Problem::class)->withTimestamps()->as('sheet_problem');
+        return $this->belongsToMany(
+            Problem::class,
+            'sheet_problem',     // Pivot table name
+            'sheet_id',          // Foreign key on pivot table for Sheet
+            'problem_id'         // Foreign key on pivot table for Problem
+        )->withTimestamps();
     }
 }
 

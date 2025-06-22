@@ -1,10 +1,22 @@
-// resources/js/pages/Containers/SheetShow.tsx
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 export default function SheetShow({ sheet }: { sheet: any }) {
+  const { delete: destroy } = useForm();
+  const user = usePage().props.auth?.user;
+
+  const handleDelete = (problemId: number) => {
+    if (confirm('Are you sure you want to remove this problem from the sheet?')) {
+      destroy(route('sheet.remove_problem', { sheet: sheet.id, problem: problemId }), {
+        preserveScroll: true,
+      });
+    }
+  };
+
+  const isOwner = user?.user_handle === sheet.owner_id;
+
   return (
     <AppLayout
       breadcrumbs={[
@@ -17,9 +29,11 @@ export default function SheetShow({ sheet }: { sheet: any }) {
       <div className="p-4 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">{sheet.title}</h1>
-          <Link href={`/sheet/${sheet.id}/edit-problems`}>
-            <Button>Edit Problems</Button>
-          </Link>
+          {isOwner && (
+            <Link href={route('sheet.add_problem_view', { sheet: sheet.id })}>
+              <Button>Edit Problems</Button>
+            </Link>
+          )}
         </div>
 
         <p className="text-gray-600">{sheet.description}</p>
@@ -34,16 +48,23 @@ export default function SheetShow({ sheet }: { sheet: any }) {
                 {sheet.problems.map((problem: any, index: number) => (
                   <li
                     key={index}
-                    className="border p-2 rounded hover:bg-gray-50 transition"
+                    className="border p-2 rounded flex justify-between items-center hover:bg-gray-50 transition"
                   >
-                    <a
-                      href={`https://codeforces.com/problemset/problem/${problem.contest_id}/${problem.index}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      href={route('problems.show', problem.problem_handle)}
                       className="text-blue-600 hover:underline"
                     >
-                      {problem.name || problem.handle}
-                    </a>
+                      {problem.title}
+                    </Link>
+                    {isOwner && (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(problem.id)}
+                      >
+                        Remove
+                      </Button>
+                    )}
                   </li>
                 ))}
               </ul>
