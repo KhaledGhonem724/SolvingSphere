@@ -12,6 +12,12 @@ use App\Models\Blog;
 use App\Models\Tag;
 
 use League\CommonMark\CommonMarkConverter;
+use Inertia\Inertia;
+
+use function Termwind\render;
+
+use App\Enums\VisibilityStatus;
+
 
 class BlogController extends Controller
 {
@@ -196,6 +202,27 @@ class BlogController extends Controller
     {
         $this->authorize('delete', $blog);
         $blog->delete();
-        return redirect()->route('blogs.index')->with('success', 'Blog deleted!');
+
+        return redirect()->route('blogs.index')
+            ->with('success', 'Blog deleted successfully');
     }
+
+
+    public function manage()
+    {
+        $blogs = Blog::with('owner')->latest()->get();
+        return view('admins.staff.blogs.manage', compact('blogs'));
+    }
+
+    public function toggleStatus(Blog $blog)
+    {
+        $blog->status = $blog->status === VisibilityStatus::Visible
+            ? VisibilityStatus::Hidden
+            : VisibilityStatus::Visible;
+
+        $blog->save();
+
+        return back()->with('success', 'Blog status updated.');
+    }
+
 }

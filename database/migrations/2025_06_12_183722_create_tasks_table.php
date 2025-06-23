@@ -16,13 +16,13 @@ return new class extends Migration
 
             $table->string('title')->nullable();
 
-            // Reporter (or the super admin - if the task is nor deriven from a report)
+            // Reporter (or the admin who created the task - if the task is nor deriven from a report)
             $table->string('user_id')->nullable();
             $table->foreign('user_id')->references('user_handle')->on('users')->onDelete('cascade')->nullable();
 
             // the Authority to which the task is assigned 
             $table->foreignId('authority_id')->constrained()->onDelete('cascade')->nullable();
-            $table->foreignId('report_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('report_id')->nullable()->constrained()->onDelete('cascade');
 
             // Type of report
             $table->enum('type', ['scientific', 'ethical', 'technical', 'other']);

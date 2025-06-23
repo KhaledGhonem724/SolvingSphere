@@ -19,6 +19,8 @@ return new class extends Migration
 
             $table->foreign('owner_id')->references('user_handle')->on('users')->onDelete('cascade');
             $table->index('owner_id');
+
+            $table->string('status')->default('visible');
         });
     }
 

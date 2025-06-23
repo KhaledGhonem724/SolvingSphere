@@ -18,4 +18,8 @@ enum ReportType: string
             self::OTHER      => 'Other',
         };
     }
+    public static function casesEnumValues(): array
+    {
+        return array_map(fn(self $case) => $case->value, self::cases());
+    }
 }

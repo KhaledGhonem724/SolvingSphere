@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\User;
 
+use App\Enums\VisibilityStatus;
+
 class BlogFactory extends Factory
 {
     protected $model = \App\Models\Blog::class;
@@ -29,6 +31,7 @@ class BlogFactory extends Factory
             'blog_type' => $this->faker->randomElement(['discussion', 'question', 'explain']),
             'score' => $this->faker->numberBetween(0, 100),
             'owner_id' => $owner ? $owner->user_handle : 'default_handle', // fallback if no users yet
+            'status' => $this->faker->randomElement(VisibilityStatus::cases())
         ];
 
     }
