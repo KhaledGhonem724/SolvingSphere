@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ProblemWithTagsSeeder::class,
             SubmissionSeeder::class,
             ReportSeeder::class,
+            TaskSeeder::class,
         ]);
     }
 }

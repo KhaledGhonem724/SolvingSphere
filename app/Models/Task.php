@@ -6,9 +6,11 @@ use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'title',
         'user_id', // reporter
@@ -26,6 +28,7 @@ class Task extends Model
 
     protected $casts = [
         'status' => TaskStatus::class,
+
     ];
 
     public function reporter(): BelongsTo
