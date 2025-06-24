@@ -10,15 +10,14 @@ return new class extends Migration
     {
         Schema::create('topic_items', function (Blueprint $table) {
             $table->id();
-            $table->string('problem_id');
-            $table->string('external_link')->nullable();
             $table->unsignedBigInteger('topic_id');
+            $table->foreignId('problem_id')->constrained()->onDelete('cascade');
+            $table->string('external_link')->nullable();
             $table->timestamps();
 
-            $table->foreign('problem_id')->references('problem_handle')->on('problems')->onDelete('cascade');
             $table->foreign('topic_id')->references('id')->on('topics')->onDelete('cascade');
-            $table->index('problem_id');
             $table->index('topic_id');
+            $table->index('problem_id');
         });
     }
 

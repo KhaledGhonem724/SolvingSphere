@@ -24,8 +24,14 @@ class Problem extends Model
     public function sheets(): BelongsToMany { 
         return $this->belongsToMany(Sheet::class, 'sheet_problem', 'problem_id', 'sheet_id'); 
     }
-    public function topicItems(): HasMany { return $this->hasMany(TopicItem::class, 'problem_id'); }
-    
+    public function topics()
+    {
+        return $this->belongsToMany(Topic::class, 'topic_items', 'problem_id', 'topic_id')
+            ->withPivot('external_link')
+            ->withTimestamps();
+    }
+
+
     public function submissions(): HasMany {
         return $this->hasMany(Submission::class, 'problem_id');
     }

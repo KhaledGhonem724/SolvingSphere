@@ -38,6 +38,16 @@ const mainNavItems: NavItem[] = [
         href: '/sheet',
         icon: FileText,
     },
+      {
+        title: 'Topics',
+        href: '/topics',
+        icon: FileText,
+    },
+      {
+        title: 'Roadmaps',
+        href: '/roadmaps',
+        icon: FileText,
+    },
     {
         title: 'Groups',
         href: '/groups',

@@ -8,20 +8,26 @@ use App\Models\Sheet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 
 class SheetController extends Controller
 {
+    use AuthorizesRequests;
     public function index()
     {
+        
+        $authHandle = auth()->user()->user_handle;
         $sheets = Sheet::withCount('problems')
-            ->where(function ($query) {
+            ->where(function ($query) use ($authHandle) {
                 $query->where('visibility', 'public')
-                    ->orWhere('owner_id', auth()->user()->user_handle);
+                    ->orWhere('owner_id', $authHandle);
             })
             ->get();
 
         return Inertia::render('Containers/sheet', [
             'sheets' => $sheets,
+            'authHandle' => $authHandle,
         ]);
     }
 
@@ -29,6 +35,15 @@ class SheetController extends Controller
     {
         return Inertia::render('Containers/create_sheet');
     }
+    public function destroy(Sheet $sheet)
+    {
+        $this->authorize('delete', $sheet); // ✅ التحقق باستخدام Policy
+
+        $sheet->delete();
+
+        return redirect()->route('sheet.index')->with('success', 'Sheet deleted successfully.');
+    }
+
 
     public function store(Request $request)
     {

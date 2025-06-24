@@ -1,11 +1,11 @@
-// File: resources/js/pages/Containers/create_sheet.tsx
+// File: resources/js/pages/Containers/CreateTopic.tsx
 import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function CreateSheet() {
+export default function CreateTopic() {
   const { data, setData, post, processing, errors } = useForm({
     title: '',
     description: '',
@@ -14,16 +14,16 @@ export default function CreateSheet() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post(route('sheet.store'));
+    post(route('topics.store'));
   };
 
   return (
-    <AppLayout breadcrumbs={[{ title: 'Create Sheet', href: '/sheet/create' }]}>
-      <Head title="Create Sheet" />
+    <AppLayout breadcrumbs={[{ title: 'Create Topic', href: '/topic/create' }]}>
+      <Head title="Create Topic" />
       <form onSubmit={handleSubmit} className="p-4 space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>Create New Sheet</CardTitle>
+            <CardTitle>Create New Topic</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input
@@ -46,7 +46,7 @@ export default function CreateSheet() {
             </select>
 
             <Button type="submit" disabled={processing} className="mt-4">
-              Create Sheet
+              Create Topic
             </Button>
           </CardContent>
         </Card>

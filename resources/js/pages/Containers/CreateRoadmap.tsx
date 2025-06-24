@@ -1,11 +1,10 @@
-// File: resources/js/pages/Containers/create_sheet.tsx
 import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function CreateSheet() {
+export default function CreateRoadmap() {
   const { data, setData, post, processing, errors } = useForm({
     title: '',
     description: '',
@@ -14,16 +13,16 @@ export default function CreateSheet() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post(route('sheet.store'));
+    post(route('roadmaps.store'));
   };
 
   return (
-    <AppLayout breadcrumbs={[{ title: 'Create Sheet', href: '/sheet/create' }]}>
-      <Head title="Create Sheet" />
+    <AppLayout breadcrumbs={[{ title: 'Create Roadmap', href: '/roadmaps/create' }]}>
+      <Head title="Create Roadmap" />
       <form onSubmit={handleSubmit} className="p-4 space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle>Create New Sheet</CardTitle>
+            <CardTitle>Create New Roadmap</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input
@@ -46,7 +45,7 @@ export default function CreateSheet() {
             </select>
 
             <Button type="submit" disabled={processing} className="mt-4">
-              Create Sheet
+              Create Roadmap
             </Button>
           </CardContent>
         </Card>
