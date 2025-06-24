@@ -127,3 +127,4 @@ require __DIR__.'/groups.php';
 require __DIR__.'/problems.php';
 require __DIR__.'/submissions.php';
 require __DIR__.'/home.php';
+

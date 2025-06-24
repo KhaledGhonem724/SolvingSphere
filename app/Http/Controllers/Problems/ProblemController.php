@@ -194,6 +194,7 @@ class ProblemController extends Controller
             ->with(['tags', 'submissions.owner'])
             ->firstOrFail();
 
+
         $user = Auth::user();
 
         // Get user's submission status for this problem
@@ -210,6 +211,7 @@ class ProblemController extends Controller
             'problem' => $problem,
             'userSubmission' => $userSubmission,
         ]);
+
 
 
     }
