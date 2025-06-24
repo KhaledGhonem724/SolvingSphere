@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
+use App\Enums\VisibilityStatus;
 
 use App\Models\Pivots\BlogReaction;
 
@@ -20,7 +23,12 @@ class Blog extends Model
         'content',
         'blog_type',
         'score',
-        'owner_id'
+        'owner_id',
+        'status' 
+    ];
+    // admin related attribute
+    protected $casts = [
+        'status' => VisibilityStatus::class,
     ];
 
     public function owner(): BelongsTo
@@ -52,5 +60,10 @@ class Blog extends Model
     public function solutions(): HasMany
     {
         return $this->hasMany(Solution::class, 'blog_id');
+    }
+
+    public function reports(): MorphMany
+    {
+        return $this->morphMany(Report::class, 'reportable');
     }
 }

@@ -1,5 +1,7 @@
 <div class="border border-gray-300 rounded-lg p-4 mb-4 {{ $comment->parent_id ? 'ml-8' : '' }} bg-white shadow-sm">
+    <!-- First section -->
     <div class="flex items-center justify-between mb-2 ">
+        <!-- Comment Meta Data : commenter and time -->
         <div>
             <span class="font-semibold text-gray-800">{{ $comment->commenter->name ?? $comment->commenter_id }}</span>
             <span class="text-gray-500 text-xs ml-2">{{ $comment->created_at->diffForHumans() }}</span>
@@ -40,10 +42,12 @@
         </form>
         @endcan
     </div>
+    <!-- First section -->
     <div class="mb-2">
-        <p class="text-gray-700 whitespace-pre-line">{{ $comment->content }}</p>
-    
-    <!-- reply button -->
+        <p class="text-gray-700 whitespace-pre-line">
+            {{ $comment->content }}
+        </p>
+        <!-- reply button -->
         @auth
             <button
                 onclick="document.getElementById('reply-form-{{ $comment->id }}').classList.toggle('hidden')"
@@ -61,7 +65,7 @@
         id="reply-form-{{ $comment->id }}"
         class="mt-3 hidden"
     >
-        @csrf
+    @csrf
         <input type="hidden" name="parent_id" value="{{ $comment->id }}">
         <textarea
             name="content"

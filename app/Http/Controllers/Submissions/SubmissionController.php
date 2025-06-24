@@ -177,7 +177,7 @@ class SubmissionController extends Controller
             'original_link' => $original_submission_link ?? null,
             'ai_response' => null,
             'owner_id' => $user->user_handle,
-            'problem_id' => $problem->problem_handle,
+            'problem_id' => $problem->id,
         ]);
 
         return redirect()->route('submissions.show', $submission->id);

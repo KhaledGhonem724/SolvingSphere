@@ -10,7 +10,11 @@
         default => 'bg-gray-100 text-gray-700',
     },
 ])
-<x-listing-item :title="$title" :href="route('blogs.show', $blog)" :badge="$badge" badgeClass="{{ $badgeClass }}">
+<x-listing-item 
+    :title="$title" 
+    :href="route('blogs.show', $blog)" 
+    :badge="$badge" 
+    badgeClass="{{ $badgeClass }}">
 
 
     <x-slot:meta>

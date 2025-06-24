@@ -10,7 +10,7 @@
 ])
 
 <div class="p-4 border rounded-xl shadow-sm bg-white hover:shadow-md transition">
-    <!-- Header: Title and Meta -->
+    <!-- Header: Title and badge -->
     <div class="flex justify-between items-start">
         <div class="text-lg font-semibold">
             <a class="text-lg font-semibold pr-2" href="{{ $href }}">{{ $title }}</a>
