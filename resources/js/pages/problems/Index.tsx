@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
+import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
-import { Plus } from 'lucide-react';
+import { ExternalLink, Filter, Plus, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
 interface Problem {
@@ -17,82 +18,77 @@ interface Problem {
     timelimit: string;
     memorylimit: string;
     created_at: string;
-    state?: string;
     tags: Array<{ id: number; name: string }>;
 }
 
-interface ProblemsIndexProps {
-    allTags: Array<{ id: number; name: string }>;
+interface UserSubmission {
+    result: string;
 }
 
-export default function ProblemsIndex({ allTags = [] }: ProblemsIndexProps) {
-    // Static problems
-    const problems = {
-        data: [
-            {
-                id: 1,
-                problem_handle: 'HE-001',
-                title: 'Make an array',
-                website: 'HackerEarth',
-                link: 'https://www.hackerearth.com/problem/array-manipulation',
-                timelimit: '2 Sec',
-                memorylimit: '256 MB',
-                created_at: new Date(2025, 5, 1).toISOString(),
-                state: 'solved',
-                tags: [
-                    { id: 1, name: 'Array' },
-                    { id: 2, name: 'Dynamic Programming' },
-                ],
-            },
-            {
-                id: 2,
-                problem_handle: 'LC-001',
-                title: 'Two Sum',
-                website: 'HackerEarth',
-                link: 'https://leetcode.com/problems/two-sum',
-                timelimit: '1 Sec',
-                memorylimit: '128 MB',
-                created_at: new Date(2025, 5, 9).toISOString(),
-                state: 'attempted',
-                tags: [
-                    { id: 3, name: 'Hash Table' },
-                    { id: 4, name: 'Easy' },
-                ],
-            },
-            {
-                id: 3,
-                problem_handle: 'MW-001',
-                title: 'Graph Traversal Complex',
-                website: 'McClure-Witting',
-                link: 'https://mcclure-witting.com/problem/graph-traversal',
-                timelimit: '3 Sec',
-                memorylimit: '512 MB',
-                created_at: new Date(2023, 3, 5).toISOString(),
-                state: 'todo',
-                tags: [
-                    { id: 5, name: 'Graph' },
-                    { id: 6, name: 'Hard' },
-                    { id: 7, name: 'BFS' },
-                ],
-            },
-        ],
-        current_page: 1,
-        last_page: 1,
+interface ProblemsIndexProps {
+    problems: {
+        data: Problem[];
+        current_page: number;
+        last_page: number;
+        links: Array<{ url: string | null; label: string; active: boolean }>;
     };
+    allTags: Array<{ id: number; name: string }>;
+    userSubmissions?: { [key: string]: UserSubmission };
+}
 
+export default function ProblemsIndex({ problems, allTags = [], userSubmissions = {} }: ProblemsIndexProps) {
     const [filters, setFilters] = useState({
         title: '',
         website: 'all',
         state: 'all',
-        tags: [],
+        tags: [] as number[],
         match_all_tags: false,
     });
 
-    const handleFilterChange = (key: string, value: string | boolean) => {
+    const handleFilterChange = (key: string, value: string | boolean | number[]) => {
         setFilters((prev) => ({
             ...prev,
             [key]: value,
         }));
+    };
+
+    const applyFilters = () => {
+        const filterParams: Record<string, string | number[] | boolean> = {};
+
+        if (filters.title) filterParams.title = filters.title;
+        if (filters.website !== 'all') filterParams.website = filters.website;
+        if (filters.state !== 'all') filterParams.state = filters.state;
+        if (filters.tags.length > 0) {
+            filterParams.tags = filters.tags;
+            filterParams.match_all_tags = filters.match_all_tags;
+        }
+
+        router.get('/problems', filterParams, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const resetFilters = () => {
+        setFilters({
+            title: '',
+            website: 'all',
+            state: 'all',
+            tags: [],
+            match_all_tags: false,
+        });
+        router.get(
+            '/problems',
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
+    };
+
+    const getUserProblemStatus = (problemHandle: string): string => {
+        return userSubmissions[problemHandle]?.result || 'todo';
     };
 
     const getStatusColor = (state: string) => {
@@ -164,7 +160,7 @@ export default function ProblemsIndex({ allTags = [] }: ProblemsIndexProps) {
                     <h1 className="text-2xl font-bold">All Problems</h1>
                     <div className="flex items-center gap-2">
                         <span className="text-muted-foreground text-sm">Can't find your problem?</span>
-                        <Button>
+                        <Button onClick={() => router.get('/problems/create')}>
                             <Plus className="mr-2 h-4 w-4" />
                             Scrape New Problem
                         </Button>
@@ -251,29 +247,42 @@ export default function ProblemsIndex({ allTags = [] }: ProblemsIndexProps) {
                                 </button>
                             </div>
                         </div>
+
+                        <div className="flex gap-2">
+                            <Button onClick={applyFilters}>
+                                <Filter className="mr-2 h-4 w-4" />
+                                Apply Filters
+                            </Button>
+                            <Button variant="outline" onClick={resetFilters}>
+                                <RotateCcw className="mr-2 h-4 w-4" />
+                                Reset
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
 
                 {/* Problems List */}
                 <div className="space-y-4">
                     {problems.data.map((problem) => (
-                        <Card key={problem.id} className="transition-shadow hover:shadow-md">
+                        <Card
+                            key={problem.id}
+                            className="cursor-pointer transition-shadow hover:shadow-md"
+                            onClick={() => router.get(`/problems/${problem.problem_handle}`)}
+                        >
                             <CardContent className="p-4">
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
                                         <div className="mb-2 flex items-center gap-3">
-                                            <a
-                                                href={problem.link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-lg font-medium transition-colors hover:text-blue-600"
+                                            <button
+                                                onClick={() => router.get(`/problems/${problem.problem_handle}`)}
+                                                className="text-left text-lg font-medium transition-colors hover:text-blue-600"
                                             >
                                                 {problem.title}
-                                            </a>
+                                            </button>
                                             <span
-                                                className={`rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(problem.state || 'todo')}`}
+                                                className={`rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(getUserProblemStatus(problem.problem_handle))}`}
                                             >
-                                                {getStatusText(problem.state || 'todo')}
+                                                {getStatusText(getUserProblemStatus(problem.problem_handle))}
                                             </span>
                                         </div>
                                         <p className="text-muted-foreground mb-2 text-sm">{problem.problem_handle}</p>
@@ -284,12 +293,31 @@ export default function ProblemsIndex({ allTags = [] }: ProblemsIndexProps) {
                                             <span>•</span>
                                             <span>{formatTimeAgo(problem.created_at)}</span>
                                         </div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {problem.tags.map((tag) => (
-                                                <Badge key={tag.id} variant="secondary">
-                                                    {tag.name}
-                                                </Badge>
-                                            ))}
+
+                                        {/* Tags Section */}
+                                        <div className="mb-2 flex flex-wrap gap-2">
+                                            {problem.tags && problem.tags.length > 0 ? (
+                                                problem.tags.map((tag) => (
+                                                    <Badge key={tag.id} variant="secondary" className="text-xs">
+                                                        {tag.name}
+                                                    </Badge>
+                                                ))
+                                            ) : (
+                                                <span className="text-xs text-gray-500 italic">No tags</span>
+                                            )}
+                                        </div>
+
+                                        {/* External Link */}
+                                        <div className="flex items-center">
+                                            <a
+                                                href={problem.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                View Original <ExternalLink className="h-3 w-3" />
+                                            </a>
                                         </div>
                                     </div>
                                     <div className="ml-4 text-right">
@@ -305,6 +333,33 @@ export default function ProblemsIndex({ allTags = [] }: ProblemsIndexProps) {
                         </Card>
                     ))}
                 </div>
+
+                {/* Pagination */}
+                {problems.last_page > 1 && (
+                    <div className="mt-6 flex items-center justify-center gap-2">
+                        {problems.links.map((link, index) => {
+                            if (!link.url) {
+                                return (
+                                    <span
+                                        key={index}
+                                        className="cursor-not-allowed px-3 py-2 text-gray-400"
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                );
+                            }
+
+                            return (
+                                <Button
+                                    key={index}
+                                    variant={link.active ? 'default' : 'outline'}
+                                    onClick={() => link.url && router.get(link.url)}
+                                    className="px-3 py-2"
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </AppLayout>
     );

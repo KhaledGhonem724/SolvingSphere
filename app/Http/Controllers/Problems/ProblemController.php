@@ -47,8 +47,8 @@ class ProblemController extends Controller
         $allTags = Tag::orderBy('name')->get();
         $user = Auth::user();
 
-        // Paginate first
-        $problems = $problems->latest()->paginate(10)->withQueryString();
+        // Paginate first, with tags relationship loaded
+        $problems = $problems->with('tags')->latest()->paginate(10)->withQueryString();
 
         $userStatus = collect();
 
@@ -94,7 +94,7 @@ class ProblemController extends Controller
     
     public function create()
     {
-        return view('problems.create');
+        return Inertia::render('problems/Create');
     }
 
     public function store(Request $request, ProblemScraperService $scraper)
@@ -188,8 +188,23 @@ class ProblemController extends Controller
 
     public function show(string $problem_handle)
     {
-        $problem = Problem::findOrFail($problem_handle);
-        return view('problems.show', compact('problem'));
+        $problem = Problem::with(['tags', 'submissions.owner'])->findOrFail($problem_handle);
+        $user = Auth::user();
+        
+        // Get user's submission status for this problem
+        $userSubmission = null;
+        if ($user) {
+            $userSubmission = Submission::where('owner_id', $user->user_handle)
+                ->where('problem_id', $problem_handle)
+                ->with('owner')
+                ->latest()
+                ->first();
+        }
+        
+        return Inertia::render('problems/Show', [
+            'problem' => $problem,
+            'userSubmission' => $userSubmission,
+        ]);
     }
 
 }

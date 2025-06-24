@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Blogs\BlogController;
 use App\Http\Controllers\Blogs\CommentController;
+use App\Models\Blog;
 
 
 Route::get('/', function () {
@@ -24,13 +25,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('profile', function () {
         $user = \Illuminate\Support\Facades\Auth::user();
 
+        // Calculate social score based on blog interactions
+        $blogs = Blog::where('owner_id', $user->user_handle)->get();
+
+        // Calculate social score components
+        $totalBlogs = $blogs->count();
+        $totalBlogScore = $blogs->sum('score');
+        $totalLikes = $blogs->sum(function ($blog) {
+            return $blog->reactions()->where('value', 1)->count();
+        });
+        $totalComments = $blogs->sum(function ($blog) {
+            return $blog->comments()->count();
+        });
+
+
         $statistics = [
             'solvedProblems' => 12, // This would come from your problems table
             'lastActiveDay' => $user->previous_active_at ? formatLastActive($user->previous_active_at) : 'Never',
             'streakDays' => $user->current_streak ?? 0,
             'maxStreakDays' => $user->max_streak ?? 0,
             'technicalScore' => 80, // This would be calculated based on your scoring system
-            'socialScore' => 20, // This would be calculated based on your scoring system
+            'totalBlogScore' => $totalBlogScore, // Total score of all user's blogs
         ];
 
         $badges = [
@@ -104,10 +119,9 @@ function formatLastActive($dateTime)
 
 
 
-require __DIR__.'/admins.php';
-require __DIR__.'/blogs.php';
-require __DIR__.'/containers.php';
-require __DIR__.'/groups.php';
-require __DIR__.'/problems.php';
-require __DIR__.'/submissions.php';
-
+require __DIR__ . '/admins.php';
+require __DIR__ . '/blogs.php';
+require __DIR__ . '/containers.php';
+require __DIR__ . '/groups.php';
+require __DIR__ . '/problems.php';
+require __DIR__ . '/submissions.php';
