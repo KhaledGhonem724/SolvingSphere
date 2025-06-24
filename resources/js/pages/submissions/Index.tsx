@@ -6,70 +6,44 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { router } from '@inertiajs/core';
 import { Head } from '@inertiajs/react';
 import { ExternalLink, Filter, Plus, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
-// Mock data for submissions
-const mockSubmissions = [
-    {
-        id: 1,
-        code: 'def two_sum(nums, target):\n    num_map = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in num_map:\n            return [num_map[complement], i]\n        num_map[num] = i\n    return []',
-        language: 'python',
-        result: 'solved',
-        oj_response: 'Accepted',
-        original_link: 'https://leetcode.com/submissions/detail/123456789/',
-        created_at: new Date(2025, 5, 15).toISOString(),
-        problem: {
-            id: 1,
-            problem_handle: 'LC-001',
-            title: 'Two Sum',
-            website: 'HackerEarth',
-        },
-        owner: {
-            user_handle: 'khalid',
-            name: 'khalid awad',
-        },
-    },
-    {
-        id: 2,
-        code: '#include <iostream>\nvector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int, int> numMap;\n    for (int i = 0; i < nums.size(); i++) {\n        int complement = target - nums[i];\n        if (numMap.find(complement) != numMap.end()) {\n            return {numMap[complement], i};\n        }\n        numMap[nums[i]] = i;\n    }\n    return {};\n}',
-        language: 'cpp',
-        result: 'attempted',
-        oj_response: 'Wrong Answer',
-        original_link: 'https://hackerearth.com/submissions/987654321/',
-        created_at: new Date(2025, 4, 10).toISOString(),
-        problem: {
-            id: 2,
-            problem_handle: 'HE-001',
-            title: 'Array Manipulation Challenge',
-            website: 'HackerEarth',
-        },
-        owner: {
-            user_handle: 'mostafa23',
-            name: 'mostafa khalifa',
-        },
-    },
-    {
-        id: 3,
-        code: 'public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> numMap = new HashMap<>();\n    for (int i = 0; i < nums.length; i++) {\n        int complement = target - nums[i];\n        if (numMap.containsKey(complement)) {\n            return new int[] {numMap.get(complement), i};\n        }\n        numMap.put(nums[i], i);\n    }\n    return new int[]{};\n}',
-        language: 'java',
-        result: 'compilation error',
-        oj_response: 'Compilation Error',
-        original_link: null,
-        created_at: new Date(2025, 3, 5).toISOString(),
-        problem: {
-            id: 3,
-            problem_handle: 'MW-001',
-            title: 'Graph Traversal Complex',
-            website: 'McClure-Witting',
-        },
-        owner: {
-            user_handle: 'code_wizard',
-            name: 'Alice Johnson',
-        },
-    },
-];
+interface Submission {
+    id: number;
+    code: string;
+    language: string;
+    result: string;
+    oj_response: string;
+    original_link: string | null;
+    created_at: string;
+    owner_id: string;
+    problem_id: string;
+    problem?: {
+        problem_handle: string;
+        title: string;
+        website: string;
+        link: string;
+    } | null;
+    owner?: {
+        user_handle: string;
+        name: string;
+        email: string;
+    } | null;
+}
+
+interface SubmissionsIndexProps {
+    submissions: Submission[];
+    filters?: {
+        problem_title?: string;
+        user_handle?: string;
+        result?: string;
+        language?: string;
+        my_submissions_only?: boolean;
+    };
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -78,14 +52,48 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function SubmissionsIndex() {
-    const [filters, setFilters] = useState({
-        problem_title: '',
-        user_handle: '',
-        result: 'all',
-        language: 'all',
-        my_submissions_only: false,
+export default function SubmissionsIndex({ submissions = [], filters = {} }: SubmissionsIndexProps) {
+    const [currentFilters, setCurrentFilters] = useState({
+        problem_title: filters.problem_title || '',
+        user_handle: filters.user_handle || '',
+        result: filters.result || 'all',
+        language: filters.language || 'all',
+        my_submissions_only: filters.my_submissions_only || false,
     });
+
+    const applyFilters = () => {
+        const filterParams: Record<string, string | boolean> = {};
+
+        if (currentFilters.problem_title) filterParams.problem_title = currentFilters.problem_title;
+        if (currentFilters.user_handle) filterParams.user_handle = currentFilters.user_handle;
+        if (currentFilters.result !== 'all') filterParams.result = currentFilters.result;
+        if (currentFilters.language !== 'all') filterParams.language = currentFilters.language;
+        if (currentFilters.my_submissions_only) filterParams.my_submissions_only = currentFilters.my_submissions_only;
+
+        router.get('/submissions', filterParams, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const resetFilters = () => {
+        setCurrentFilters({
+            problem_title: '',
+            user_handle: '',
+            result: 'all',
+            language: 'all',
+            my_submissions_only: false,
+        });
+
+        router.get(
+            '/submissions',
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
+    };
 
     const getResultColor = (result: string) => {
         switch (result.toLowerCase()) {
@@ -120,7 +128,7 @@ export default function SubmissionsIndex() {
                     <h1 className="text-2xl font-bold">All Submissions</h1>
                     <div className="flex items-center gap-2">
                         <span className="text-muted-foreground text-sm">Submit your solution!!</span>
-                        <Button>
+                        <Button onClick={() => router.get('/submissions/create')}>
                             <Plus className="mr-2 h-4 w-4" />
                             Submit Solution
                         </Button>
@@ -138,21 +146,24 @@ export default function SubmissionsIndex() {
                                 <label className="mb-2 block text-sm font-medium">User Handle</label>
                                 <Input
                                     placeholder="Search by user..."
-                                    value={filters.user_handle}
-                                    onChange={(e) => setFilters((prev) => ({ ...prev, user_handle: e.target.value }))}
+                                    value={currentFilters.user_handle}
+                                    onChange={(e) => setCurrentFilters((prev) => ({ ...prev, user_handle: e.target.value }))}
                                 />
                             </div>
                             <div>
                                 <label className="mb-2 block text-sm font-medium">Problem Title</label>
                                 <Input
                                     placeholder="Search by problem..."
-                                    value={filters.problem_title}
-                                    onChange={(e) => setFilters((prev) => ({ ...prev, problem_title: e.target.value }))}
+                                    value={currentFilters.problem_title}
+                                    onChange={(e) => setCurrentFilters((prev) => ({ ...prev, problem_title: e.target.value }))}
                                 />
                             </div>
                             <div>
                                 <label className="mb-2 block text-sm font-medium">Result</label>
-                                <Select value={filters.result} onValueChange={(value) => setFilters((prev) => ({ ...prev, result: value }))}>
+                                <Select
+                                    value={currentFilters.result}
+                                    onValueChange={(value) => setCurrentFilters((prev) => ({ ...prev, result: value }))}
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="All" />
                                     </SelectTrigger>
@@ -160,15 +171,15 @@ export default function SubmissionsIndex() {
                                         <SelectItem value="all">All</SelectItem>
                                         <SelectItem value="solved">Solved</SelectItem>
                                         <SelectItem value="attempted">Attempted</SelectItem>
-                                        <SelectItem value="wrong answer">Wrong Answer</SelectItem>
-                                        <SelectItem value="time limit exceeded">Time Limit Exceeded</SelectItem>
-                                        <SelectItem value="compilation error">Compilation Error</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div>
                                 <label className="mb-2 block text-sm font-medium">Language</label>
-                                <Select value={filters.language} onValueChange={(value) => setFilters((prev) => ({ ...prev, language: value }))}>
+                                <Select
+                                    value={currentFilters.language}
+                                    onValueChange={(value) => setCurrentFilters((prev) => ({ ...prev, language: value }))}
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="All" />
                                     </SelectTrigger>
@@ -185,8 +196,8 @@ export default function SubmissionsIndex() {
                         <div className="flex items-center space-x-2">
                             <Checkbox
                                 id="my-submissions"
-                                checked={filters.my_submissions_only}
-                                onCheckedChange={(checked) => setFilters((prev) => ({ ...prev, my_submissions_only: checked as boolean }))}
+                                checked={currentFilters.my_submissions_only}
+                                onCheckedChange={(checked) => setCurrentFilters((prev) => ({ ...prev, my_submissions_only: checked as boolean }))}
                             />
                             <label htmlFor="my-submissions" className="text-muted-foreground cursor-pointer text-sm">
                                 My submissions only
@@ -194,11 +205,11 @@ export default function SubmissionsIndex() {
                         </div>
 
                         <div className="flex gap-2">
-                            <Button>
+                            <Button onClick={applyFilters}>
                                 <Filter className="mr-2 h-4 w-4" />
-                                Filter
+                                Apply Filters
                             </Button>
-                            <Button variant="outline">
+                            <Button variant="outline" onClick={resetFilters}>
                                 <RotateCcw className="mr-2 h-4 w-4" />
                                 Reset
                             </Button>
@@ -208,8 +219,8 @@ export default function SubmissionsIndex() {
 
                 {/* Submissions List */}
                 <div className="space-y-4">
-                    {mockSubmissions.map((submission) => (
-                        <Card key={submission.id} className="transition-shadow hover:shadow-md">
+                    {submissions.map((submission) => (
+                        <Card key={submission.problem?.problem_handle} className="transition-shadow hover:shadow-md">
                             <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
                                     <div className="flex-1">
@@ -218,34 +229,35 @@ export default function SubmissionsIndex() {
                                                 href={`/submissions/${submission.id}`}
                                                 className="text-lg font-medium transition-colors hover:text-blue-600"
                                             >
-                                                {submission.problem.title}
+                                                {submission.problem?.problem_handle || 'Problem Not Found'}
                                             </a>
                                             <span className={`rounded-full px-2 py-1 text-xs font-semibold ${getResultColor(submission.result)}`}>
                                                 {submission.result.charAt(0).toUpperCase() + submission.result.slice(1)}
                                             </span>
                                         </div>
-                                        <p className="text-muted-foreground mb-2 text-sm">{submission.problem.problem_handle}</p>
+
                                         <div className="text-muted-foreground mb-2 flex items-center gap-4 text-sm">
                                             <span>
                                                 Language: <strong>{submission.language}</strong>
                                             </span>
                                             <span>•</span>
                                             <span>
-                                                By: <strong>{submission.owner.user_handle}</strong>
+                                                By: <strong>{submission.owner?.name || 'User Not Found'}</strong>
                                             </span>
                                             <span>•</span>
                                             <span>{formatTimeAgo(submission.created_at)}</span>
                                         </div>
                                         <div className="mt-2 flex items-center gap-2">
-                                            <Badge variant="secondary">{submission.problem.website}</Badge>
+                                            <Badge variant="secondary">{submission.problem?.website || 'Unknown OJ'}</Badge>
                                             {submission.original_link && (
                                                 <a
                                                     href={submission.original_link}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+                                                    className="flex items-center text-xs text-blue-600 hover:underline"
                                                 >
-                                                    View Original <ExternalLink className="h-3 w-3" />
+                                                    <ExternalLink className="mr-1 h-3 w-3" />
+                                                    Original Submission
                                                 </a>
                                             )}
                                         </div>

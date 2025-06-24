@@ -233,39 +233,62 @@ export default function BlogIndex({ blogs, allTags, filters: initialFilters }: B
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {blogs.data.map((blog) => (
-                        <Card key={blog.id} className="transition-shadow hover:shadow-lg">
-                            <CardHeader>
-                                <div className="flex items-center justify-between">
-                                    <CardTitle>{blog.title}</CardTitle>
-                                    <Badge variant="outline" className="capitalize">
-                                        {blog.blog_type}
-                                    </Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground line-clamp-3">{blog.content}</p>
-                                <div className="mt-4 flex flex-wrap gap-2">
-                                    {blog.tags.map((tag) => (
-                                        <Badge key={tag.id} variant="secondary">
-                                            {tag.name}
+                    {blogs.data.map((blog) => {
+                        // Define background colors based on blog type
+                        const blogTypeColors = {
+                            discussion: 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-800',
+                            question: 'bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800',
+                            explain: 'bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-800',
+                        };
+
+                        const typeColorClass =
+                            blogTypeColors[blog.blog_type] || 'bg-gray-50 border-gray-200 dark:bg-gray-900/30 dark:border-gray-800';
+
+                        return (
+                            <Card key={blog.id} className={`transition-shadow hover:shadow-lg ${typeColorClass} border`}>
+                                <CardHeader>
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle>{blog.title}</CardTitle>
+                                        <Badge
+                                            variant="outline"
+                                            className={`capitalize ${
+                                                blog.blog_type === 'discussion'
+                                                    ? 'bg-yellow-100 text-yellow-800'
+                                                    : blog.blog_type === 'question'
+                                                      ? 'bg-blue-100 text-blue-800'
+                                                      : blog.blog_type === 'explain'
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : 'bg-gray-100 text-gray-800'
+                                            }`}
+                                        >
+                                            {blog.blog_type}
                                         </Badge>
-                                    ))}
-                                </div>
-                            </CardContent>
-                            <CardFooter className="flex items-center justify-between">
-                                <div className="text-muted-foreground text-sm">
-                                    <div>By {blog.owner.user_handle}</div>
-                                    <div>{formatTimeAgo(blog.created_at)}</div>
-                                </div>
-                                <Link href={`/blogs/${blog.id}`}>
-                                    <Button variant="outline" size="sm">
-                                        Read More
-                                    </Button>
-                                </Link>
-                            </CardFooter>
-                        </Card>
-                    ))}
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-muted-foreground line-clamp-3">{blog.content}</p>
+                                    <div className="mt-4 flex flex-wrap gap-2">
+                                        {blog.tags.map((tag) => (
+                                            <Badge key={tag.id} variant="secondary">
+                                                {tag.name}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="flex items-center justify-between">
+                                    <div className="text-muted-foreground text-sm">
+                                        <div>By {blog.owner.user_handle}</div>
+                                        <div>{formatTimeAgo(blog.created_at)}</div>
+                                    </div>
+                                    <Link href={`/blogs/${blog.id}`}>
+                                        <Button variant="outline" size="sm">
+                                            Read More
+                                        </Button>
+                                    </Link>
+                                </CardFooter>
+                            </Card>
+                        );
+                    })}
                 </div>
 
                 {/* Pagination */}
