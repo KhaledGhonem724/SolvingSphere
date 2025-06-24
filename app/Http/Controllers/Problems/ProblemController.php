@@ -91,7 +91,7 @@ class ProblemController extends Controller
         ]);
     }
 
-    
+
     public function create()
     {
         return Inertia::render('problems/Create');
@@ -105,7 +105,7 @@ class ProblemController extends Controller
         ]);
 
         $url = $validated['problem-url'];
-        if (Problem::where('link', $url)->exists()){
+        if (Problem::where('link', $url)->exists()) {
             dd("URL : Problem already exists in the database"); // FOR TESTING
             return back()->withErrors(['problem-url' => 'Problem already exists in the database.']);
         }
@@ -118,7 +118,7 @@ class ProblemController extends Controller
             $scraped['status'] !== 'scraped' ||
             !isset($scraped['problem']['problem_handle'])
         ) {
-            dd(["FUCK",$scraped]); // FOR TESTING
+            dd(["FUCK", $scraped]); // FOR TESTING
             return back()->withErrors(['problem-url' => 'Failed to fetch problem data.']);
         }
         /*
@@ -145,11 +145,11 @@ class ProblemController extends Controller
         $problemData = $scraped['problem'];
         $problemHandle = $problemData['problem_handle'];
         $tagsArray = $scraped['tags'];
-        
+
         // Check for duplicates
         if (Problem::where('problem_handle', $problemHandle)->exists()) {
 
-            dd("problem_handle : Problem already exists in the database");// FOR TESTING
+            dd("problem_handle : Problem already exists in the database"); // FOR TESTING
             return back()->withErrors(['problem-url' => 'Problem already exists in the database.']);
         }
 
@@ -180,7 +180,7 @@ class ProblemController extends Controller
         // Example: $problem->tags()->createMany($scraped['tags']);
 
         return redirect()->route('problems.show', $problemHandle)
-                        ->with('success', 'Problem created successfully.');
+            ->with('success', 'Problem created successfully.');
 
         // return redirect()->route('problems.index')->with('success', 'Problem created successfully.');
 
@@ -189,19 +189,23 @@ class ProblemController extends Controller
     public function show(Problem $problem)
     {
 
-        $problem = Problem::with(['tags', 'submissions.owner'])->findOrFail($problem_handle);
+        // Explicitly find the problem by problem_handle
+        $problem = Problem::where('problem_handle', $problem->problem_handle)
+            ->with(['tags', 'submissions.owner'])
+            ->firstOrFail();
+
         $user = Auth::user();
-        
+
         // Get user's submission status for this problem
         $userSubmission = null;
         if ($user) {
             $userSubmission = Submission::where('owner_id', $user->user_handle)
-                ->where('problem_id', $problem_handle)
+                ->where('problem_id', $problem->problem_handle)
                 ->with('owner')
                 ->latest()
                 ->first();
         }
-        
+
         return Inertia::render('problems/Show', [
             'problem' => $problem,
             'userSubmission' => $userSubmission,
@@ -209,6 +213,4 @@ class ProblemController extends Controller
 
 
     }
-
 }
-
