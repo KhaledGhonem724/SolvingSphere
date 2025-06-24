@@ -1,5 +1,5 @@
 <x-temp-general-layout :title="$problem->title ?? 'Problem Page'">
-<article class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 space-y-6">
+<article class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 space-y-6 mb-4">
         <!-- Blog Title -->
         <h1 class="text-4xl font-bold text-gray-900 leading-tight">
             Submission for Problem : {{ $submission->problem->title  }}
@@ -54,10 +54,44 @@
         </div>
 
 
+        <form method="POST" action="{{ route('submissions.ai_hint', $submission->id) }}">
+            @csrf
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Generate AI Hint
+            </button>
+        </form>
+
 
 
     </article>
 
+
+
+
+
+
+
+
+
+
+
+    @if ($submission->ai_response)
+
+    <article class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 space-y-6">
+
+        <!-- Ai Hint Content -->
+        <div class="prose max-w-none prose-lg prose-blue">
+            <div class="mb-4">
+                <strong>AI Hint:</strong> 
+                <br>
+                {!! $submission->ai_response !!}
+            </div>
+        </div>
+
+
+
+    </article>
+    @endif
     
 
 
