@@ -7,11 +7,17 @@ export default function SheetShow({ sheet }: { sheet: any }) {
   const { delete: destroy } = useForm();
   const user = usePage().props.auth?.user;
 
-  const handleDelete = (problemId: number) => {
+  const handleDeleteProblem = (problemId: number) => {
     if (confirm('Are you sure you want to remove this problem from the sheet?')) {
       destroy(route('sheet.remove_problem', { sheet: sheet.id, problem: problemId }), {
         preserveScroll: true,
       });
+    }
+  };
+
+  const handleDeleteSheet = () => {
+    if (confirm('Are you sure you want to delete this entire sheet?')) {
+      destroy(route('sheet.destroy', sheet.id));
     }
   };
 
@@ -30,9 +36,14 @@ export default function SheetShow({ sheet }: { sheet: any }) {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">{sheet.title}</h1>
           {isOwner && (
-            <Link href={route('sheet.add_problem_view', { sheet: sheet.id })}>
-              <Button>Edit Problems</Button>
-            </Link>
+            <div className="flex gap-2">
+              <Link href={route('sheet.add_problem_view', { sheet: sheet.id })}>
+                <Button>Edit Problems</Button>
+              </Link>
+              <Button variant="destructive" onClick={handleDeleteSheet}>
+                Delete Sheet
+              </Button>
+            </div>
           )}
         </div>
 
@@ -60,7 +71,7 @@ export default function SheetShow({ sheet }: { sheet: any }) {
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDelete(problem.id)}
+                        onClick={() => handleDeleteProblem(problem.id)}
                       >
                         Remove
                       </Button>

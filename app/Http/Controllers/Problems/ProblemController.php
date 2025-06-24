@@ -188,6 +188,8 @@ class ProblemController extends Controller
 
     public function show(Problem $problem)
     {
+
+
         $problem = Problem::with(['tags', 'submissions.owner'])->findOrFail($problem_handle);
         $user = Auth::user();
         
@@ -205,6 +207,9 @@ class ProblemController extends Controller
             'problem' => $problem,
             'userSubmission' => $userSubmission,
         ]);
+
+
+
     }
 
 }

@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -13,12 +12,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('roadmap_id');
             $table->unsignedBigInteger('topic_id');
+            $table->integer('order')->nullable(); // Optional: for custom ordering
             $table->timestamps();
 
             $table->foreign('roadmap_id')->references('id')->on('roadmaps')->onDelete('cascade');
             $table->foreign('topic_id')->references('id')->on('topics')->onDelete('cascade');
-            $table->index('roadmap_id');
-            $table->index('topic_id');
+            $table->index(['roadmap_id', 'topic_id']);
         });
     }
 

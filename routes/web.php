@@ -11,6 +11,7 @@ use App\Http\Controllers\Blogs\CommentController;
 use App\Models\Blog;
 
 
+
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
@@ -118,9 +119,12 @@ function formatLastActive($dateTime)
 }
 
 
-require __DIR__ . '/admins.php';
-require __DIR__ . '/blogs.php';
-require __DIR__ . '/containers.php';
-require __DIR__ . '/groups.php';
-require __DIR__ . '/problems.php';
-require __DIR__ . '/submissions.php';
+
+require __DIR__.'/admins.php';
+require __DIR__.'/blogs.php';
+require __DIR__.'/containers.php';
+require __DIR__.'/groups.php';
+require __DIR__.'/problems.php';
+require __DIR__.'/submissions.php';
+require __DIR__.'/home.php';
+

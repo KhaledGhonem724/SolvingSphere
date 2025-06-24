@@ -14,6 +14,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 
 import { BookOpen, Box, Code, FileText, Home, ShieldCheck, User, Users, ListChecks, Route } from 'lucide-react';
+
 import AppLogoIcon from './app-logo-icon';
 import SLogoIcon from './charS-logo-icon';
 
@@ -36,6 +37,16 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Sheets',
         href: '/sheet',
+        icon: FileText,
+    },
+      {
+        title: 'Topics',
+        href: '/topics',
+        icon: FileText,
+    },
+      {
+        title: 'Roadmaps',
+        href: '/roadmaps',
         icon: FileText,
     },
     {
@@ -67,7 +78,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader className="border-border/40 flex items-center justify-center border-b py-4">
+            <SidebarHeader className="flex justify-center items-center py-4 border-b border-border/40">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton
@@ -80,9 +91,9 @@ export function AppSidebar() {
                         >
                             <Link href="/dashboard" prefetch>
                                 {isExpanded ? (
-                                    <AppLogoIcon className={`mx-auto h-30 w-30 object-contain transition-all duration-300`} />
+                                    <AppLogoIcon className={`object-contain mx-auto transition-all duration-300 h-30 w-30`} />
                                 ) : (
-                                    <SLogoIcon className={`mx-auto h-16 w-16 object-contain transition-all duration-300`} />
+                                    <SLogoIcon className={`object-contain mx-auto w-16 h-16 transition-all duration-300`} />
                                 )}
                             </Link>
                         </SidebarMenuButton>
@@ -90,11 +101,11 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent className="flex h-full flex-col justify-start space-y-6 py-8">
+            <SidebarContent className="flex flex-col justify-start py-8 space-y-6 h-full">
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
-            <SidebarFooter className="border-border/40 border-t">
+            <SidebarFooter className="border-t border-border/40">
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
