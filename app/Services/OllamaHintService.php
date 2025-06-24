@@ -21,10 +21,15 @@ class OllamaHintService
         ]);
 
         if ($response->successful()) {
-            return $response->json('answer');
+            $json = $response->json();
+            return $json['answer'] ?? 'No answer received.';
         }
 
-        throw new \Exception('Debugging API failed: ' . $response->body());
+        Log::error('OllamaHintService error', [
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
+
+        throw new \Exception('Failed to get debug hint from Ollama service.');
     }
-    
 }

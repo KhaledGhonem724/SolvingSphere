@@ -12,6 +12,8 @@ use App\Services\ProblemSubmitterService;
 use App\Models\Submission;
 use App\Models\Problem;
 
+use App\Services\OllamaHintService;
+
 //use App\Http\Controllers\Problems\ProblemController;
 
 class SubmissionController extends Controller
@@ -208,5 +210,29 @@ class SubmissionController extends Controller
                         ->with('success', 'Submission result refreshed successfully.');
     }
 
+    public function generateAiHint($id, OllamaHintService $ollama)
+    {
+        $submission = Submission::findOrFail($id);
+        $code = $submission->code;
+    
+        try {
+            $hint = $ollama->getDebugHint($code);
+    
+            \Log::info('Hint from Ollama:', ['hint' => $hint]);
+    
+            $submission->ai_response = $hint;
+            $submission->save();
+    
+            \Log::info('Updated Submission:', ['id' => $submission->id, 'ai_response' => $submission->ai_response]);
+    
+            return redirect()->route('submissions.show', $submission->id)
+                ->with('success', 'AI hint generated and saved successfully.');
+        } catch (\Exception $e) {
+            \Log::error('AI hint generation failed', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to generate AI hint.']);
+        }
+    }
+    
+    
 }
 
