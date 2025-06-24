@@ -25,7 +25,7 @@ interface ProfileProps {
         streakDays: number;
         maxStreakDays: number;
         technicalScore: number;
-        socialScore: number;
+        totalBlogScore: number;
     };
     badges: Array<{
         id: number;
@@ -197,7 +197,7 @@ export default function Profile({ statistics, badges, socialLinks, hackerEarthDa
                                     <span className="text-2xl font-bold">{statistics.technicalScore}</span>
                                 </div>
 
-                                {/* Social Score */}
+                                {/* Total Blog Score */}
                                 <div className="flex flex-col space-y-2 rounded-lg border p-4">
                                     <div className="flex items-center space-x-2">
                                         <svg className="h-5 w-5 text-pink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -208,7 +208,7 @@ export default function Profile({ statistics, badges, socialLinks, hackerEarthDa
                                         </svg>
                                         <span className="text-sm font-medium">Social Score</span>
                                     </div>
-                                    <span className="text-2xl font-bold">{statistics.socialScore}</span>
+                                    <span className="text-2xl font-bold">{statistics.totalBlogScore}</span>
                                 </div>
                             </div>
                         </CardContent>

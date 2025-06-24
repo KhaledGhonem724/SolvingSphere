@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
+import { BookOpen, Box, Code, FileText, Home, ShieldCheck, User, Users, ListChecks, Route } from 'lucide-react';
 
-import { BookOpen, Code, FileText, Home, ShieldCheck, User, Users } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
 import SLogoIcon from './charS-logo-icon';
 
@@ -34,6 +34,7 @@ const mainNavItems: NavItem[] = [
         icon: FileText,
     },
     {
+
         title: 'Sheets',
         href: '/sheet',
         icon: FileText,
@@ -49,6 +50,7 @@ const mainNavItems: NavItem[] = [
         icon: FileText,
     },
     {
+
         title: 'Groups',
         href: '/groups',
         icon: Users,
