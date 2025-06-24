@@ -280,8 +280,8 @@ export default function HackerEarthConnection({ initialData, onUpdate }: HackerE
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />
-                                <Button 
-                                    onClick={handleRefresh} 
+                                <Button
+                                    onClick={handleRefresh}
                                     disabled={isRefreshing || !formData.password}
                                     size="sm"
                                 >
