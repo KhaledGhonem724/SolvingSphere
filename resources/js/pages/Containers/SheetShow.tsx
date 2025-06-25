@@ -59,7 +59,7 @@ export default function SheetShow({ sheet }: { sheet: any }) {
                 {sheet.problems.map((problem: any, index: number) => (
                   <li
                     key={index}
-                    className="border p-2 rounded flex justify-between items-center hover:bg-gray-50 transition"
+                    className="border p-2 rounded flex justify-between items-center transition"
                   >
                     <Link
                       href={route('problems.show', problem.problem_handle)}

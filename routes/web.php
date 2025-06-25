@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Profiles\PersonalInfoController;
 use App\Http\Controllers\Containers\SheetController;
 use App\Http\Controllers\HackerEarthController;
@@ -11,6 +12,7 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
