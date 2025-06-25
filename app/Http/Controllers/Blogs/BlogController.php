@@ -17,6 +17,9 @@ use Inertia\Inertia;
 
 use function Termwind\render;
 
+use App\Enums\VisibilityStatus;
+
+
 class BlogController extends Controller
 {
     use AuthorizesRequests;
@@ -238,4 +241,23 @@ class BlogController extends Controller
         return redirect()->route('blogs.index')
             ->with('success', 'Blog deleted successfully');
     }
+
+
+    public function manage()
+    {
+        $blogs = Blog::with('owner')->latest()->get();
+        return view('admins.staff.blogs.manage', compact('blogs'));
+    }
+
+    public function toggleStatus(Blog $blog)
+    {
+        $blog->status = $blog->status === VisibilityStatus::Visible
+            ? VisibilityStatus::Hidden
+            : VisibilityStatus::Visible;
+
+        $blog->save();
+
+        return back()->with('success', 'Blog status updated.');
+    }
+
 }

@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    // AI Hint Service 
+    'ollama_hint' => [
+        'url' => env('OLLAMA_HINT_API_URL', 'http://localhost:5002'),
+    ],
+
+    // 
+
+
 ];

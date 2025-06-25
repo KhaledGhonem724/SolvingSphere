@@ -10,7 +10,9 @@ Route::middleware(['auth'])->prefix('submissions')->group(function () {
     Route::get('/create', [SubmissionController::class, 'general_create'])->name('submissions.general.create');               // List all submissions
     Route::post('/create', [SubmissionController::class, 'general_store'])->name('submissions.general.store');
     Route::get('/{id}', [SubmissionController::class, 'show'])->name('submissions.show');     // Show submission details
-    
+    Route::post('/{id}/ai-hint', [SubmissionController::class, 'generateAiHint'])
+    ->name('submissions.ai_hint')
+    ->middleware(['auth']);
     // not active yet
     Route::post('/{id}/refresh', [SubmissionController::class, 'refresh'])->name('submissions.refresh');
 });

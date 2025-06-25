@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
             'github_url' => "https://github.com/KhaledGhonem724",
             'portfolio_url' => "https://github.com/KhaledGhonem724",
         ]);
-        User::factory()->count(5)->create();
+        User::factory()->count(30)->create();
 
     }
 }
