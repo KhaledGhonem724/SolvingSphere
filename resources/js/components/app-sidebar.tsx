@@ -13,7 +13,9 @@ import {
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 
-import { BookOpen, Box, Code, FileText, Home, ShieldCheck, User, Users, ListChecks, Route } from 'lucide-react';
+
+import { BookOpen, Code, FileText, Home, ShieldCheck, User, Users ,Route,ListChecks,ListTree,} from 'lucide-react';
+
 
 import AppLogoIcon from './app-logo-icon';
 import SLogoIcon from './charS-logo-icon';
@@ -32,7 +34,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Submissions',
         href: '/submissions',
-        icon: FileText,
+        icon: ListChecks,
     },
     {
         title: 'Sheets',
@@ -42,12 +44,12 @@ const mainNavItems: NavItem[] = [
       {
         title: 'Topics',
         href: '/topics',
-        icon: FileText,
+        icon: Route,
     },
       {
         title: 'Roadmaps',
         href: '/roadmaps',
-        icon: FileText,
+        icon: ListTree,
     },
     {
         title: 'Groups',

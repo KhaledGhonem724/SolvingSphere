@@ -72,7 +72,7 @@ export default function TopicShow({ topic }: { topic: any }) {
                 {topic.problems.map((problem: any, index: number) => (
                   <li
                     key={index}
-                    className="border p-3 rounded hover:bg-gray-50 transition space-y-1"
+                    className="border p-3 rounded : transition space-y-1"
                   >
                     <div className="flex justify-between items-center">
                       <Link
